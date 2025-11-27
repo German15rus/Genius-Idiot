@@ -1,6 +1,8 @@
 ﻿using System.IO.Pipes;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Genius___Idiot
 {
@@ -9,34 +11,43 @@ namespace Genius___Idiot
         static void Main(string[] args)
         {
             Console.WriteLine("Добро пожаловать на игру! Введите своё имя:");
-            string userName = Console.ReadLine();
-            int cnt = 0;
-            (List<string> questions, List<string> answers) = CreateQuestions();
-            List<string> simillarQuestions = new List<string>(questions);
-            List<string> simillarAnswers = new List<string>(answers);
-            bool stop = false;
+            string userName = Console.ReadLine()!;
+			Console.WriteLine($"Приятно познакомиться, {userName}.");
+            
+            WannaPlay(userName);
+            
+            string userAgreed = "";
+            bool stop = true;
+            
+            PlayAgain(stop,userAgreed);
+			
             while (stop != true)
-            {
+			{
+                int cnt = 0;
+                (List<string> questions, List<string> answers) = CreateQuestions();
+                List<string> simillarQuestions = new List<string>(questions);
+                List<string> simillarAnswers = new List<string>(answers);
                 for (int i = 0; i != questions.Count; i++)
                 {
                     Random rnd = new Random();
-                    int randomIndex = rnd.Next(simillarQuestions.Count);
+                    int randomIndex = rnd.Next(simillarQuestions.Count);//подбор вопроса
                     Console.WriteLine(simillarQuestions[randomIndex]);
-                    string userAnswer = Console.ReadLine();
+                    
+                    string userAnswer = Console.ReadLine()!;
+                    
                     if (userAnswer == simillarAnswers[randomIndex])
                     {
                         cnt++;
                     }
-                    simillarQuestions.RemoveAt(randomIndex);
+                    simillarQuestions.RemoveAt(randomIndex);//убрали вопрос и ответ который был
                     simillarAnswers.RemoveAt(randomIndex);
                 }
+
                 MakeADiagnos(cnt, userName);
+
                 cnt = 0;
-                Console.WriteLine("Хотите начать снова?");
-                string playAgain = Console.ReadLine();
-                if (playAgain == "нет")
-                    break;
-                else if (playAgain == "да");
+                WannaPlay(userName);//спрашиваем играть будет
+                PlayAgain(stop,userAgreed);//и снова ес че
             }
         }
         public static void MakeADiagnos(int cnt, string userName)
@@ -51,24 +62,61 @@ namespace Genius___Idiot
                 case 5: Console.WriteLine($"{userName}, вы - Гений"); break;
             }
         }
+
         static (List<string>, List<string>) CreateQuestions()
         {
             Random rnd = new Random();
-            List<string> questionsBank = new List<string>() {"1","2","3","4","5","6","7","8","9","10"};
-            List<string> answerBank = new List<string>() {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+            List<string> questionsBank = new List<string>() { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
+            List<string> answersBank = new List<string>() { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
+
             List<string> questions = new List<string>();
-            List<string> simillarQuestions = new List<string>(questionsBank);//копия банка вопросов
-            List<string> simillarQuestions1 = new List<string>(answerBank);//копия банка ответов
             List<string> answers = new List<string>();
+
             for (int i = 0; i < 5; i++)
             {
-                int rndIndex = rnd.Next(simillarQuestions.Count);
-                questions.Add(simillarQuestions[rndIndex]);
-                answers.Add(simillarQuestions1[rndIndex]);
-                simillarQuestions.RemoveAt(rndIndex);
-                simillarQuestions1.RemoveAt(rndIndex);
+                int rndIndex = rnd.Next(questionsBank.Count);
+
+                questions.Add(questionsBank[rndIndex]);
+                answers.Add(answersBank[rndIndex]);
+
+                questionsBank.RemoveAt(rndIndex);
+                answersBank.RemoveAt(rndIndex);
             }
             return (questions, answers);
         }
+        static bool PlayAgain(bool stop,string userAgreed)
+        {
+            stop = false;
+
+            if (userAgreed.Equals("да", StringComparison.CurrentCultureIgnoreCase))
+            {
+                stop = false;
+            }
+            else
+                stop = true;
+            return stop;
+		}
+        static string WannaPlay(string userName)
+        {
+			Console.WriteLine($"{userName}, готов сыграть в игру?");
+            string userAgreed = Console.ReadLine()!;
+            bool end = false;
+            while (end != true)
+            {
+                if (userAgreed.Equals("да", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    end = true;
+                }
+                else if (userAgreed.Equals("нет", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    end = true;
+                }
+                else
+                {
+                    Console.WriteLine("такого варианта нет");
+				}
+			}
+            return userAgreed;
+		}
     }
 }
