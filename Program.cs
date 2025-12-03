@@ -7,168 +7,138 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Genius___Idiot
 {
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-            bool delete = false;
-            string newUserQuestion = "";
-            string newUserAnswer = "";
-            Console.WriteLine("Добро пожаловать на игру! Введите своё имя:");
-            string userName = Console.ReadLine()!;
+	internal class Program
+	{
+		static void Main(string[] args)
+		{
+			string diagnos = "Не установлен";
+			Console.WriteLine("Добро пожаловать на игру! Введите своё имя:");
+			string userName = Console.ReadLine()!;
+			userName = char.ToUpper(userName[0]) + userName.Substring(1);
 			Console.WriteLine($"Приятно познакомиться, {userName}.");
-            
-            WannaPlay(userName);
-            
-            string userAgreed = "";
-            bool stop = true;
-            
-            PlayAgain(stop,userAgreed);
-            int cnt = 0;
-            while (stop != true)
+
+			Console.WriteLine("Напишите номер того, что вас интересует.");
+			Console.WriteLine("1)Играть 2)Результаты 3)Удалить/Добавить");
+			string userAnswer = Console.ReadLine()!;
+			userAnswer = userAnswer.ToLower();
+
+			int cnt = 0;
+			(List<string> questions, List<string> answers) = CreateQuestions();
+			while (WannaPlay(userName))
 			{
-                (List<string> questions, List<string> answers) = CreateQuestions(newUserQuestion,newUserAnswer,delete);
-                List<string> simillarQuestions = new List<string>(questions);
-                List<string> simillarAnswers = new List<string>(answers);
-                Console.WriteLine("Если вы захотите удалить вопрос напишите - Удалить");
-                for (int i = 0; i != questions.Count; i++)
-                {
-                    Random rnd = new Random();
-                    int randomIndex = rnd.Next(simillarQuestions.Count);
-                    Console.WriteLine(simillarQuestions[randomIndex]);
-                    
-                    string userAnswer = Console.ReadLine()!;
-                    
-                    if (userAnswer == simillarAnswers[randomIndex])
-                    {
-                        cnt++;
-                    }
-                    if (userAnswer == "Удалить")
-                    {
-                        delete = true;
-                        newUserAnswer = simillarAnswers[randomIndex];
-                        newUserQuestion = simillarQuestions[randomIndex];
-                        CreateQuestions(newUserQuestion,newUserAnswer, delete);
-                        delete = false;
-                    }
-                    simillarQuestions.RemoveAt(randomIndex);
-                    simillarAnswers.RemoveAt(randomIndex);
-                }//подбор вопроса И убрали вопрос и ответ который был
+				List<string> simillarQuestions = new List<string>(questions);
+				List<string> simillarAnswers = new List<string>(answers);
+				for (int i = 0; i != questions.Count; i++)
+				{
+					Random rnd = new Random();
+					int randomIndex = rnd.Next(simillarQuestions.Count);
+					Console.WriteLine(simillarQuestions[randomIndex]);
 
-                MakeADiagnos(questions,cnt, userName);
-                Console.WriteLine("Вы хотите создать новый вопрос?");
-                string createQuestion = Console.ReadLine()!;
-                if (createQuestion.Equals("да", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    Console.WriteLine("Введите вопрос, а после ответ на него");
-                     newUserQuestion = Console.ReadLine()!;
-                    newUserAnswer = Console.ReadLine()!;
-                    CreateQuestions(newUserQuestion,newUserAnswer, delete);  
-                }
-                cnt = 0;
-                WannaPlay(userName);//спрашиваем играть будет
-                PlayAgain(stop,userAgreed);//и снова ес че
-                GamingResults(cnt , MakeADiagnos(questions,cnt,userName), userName);    //ПРОВЕРЬ ЭТУ ФУНКЦИЮ ЖБ ТАМ ЧЕ ТО НЕСЕРЬЁЗНОЕ
-            }
-            Console.WriteLine("Результаты предыдущих попыток");
-        }
-        public static string MakeADiagnos(List<string> questions, int cnt, string userName)
-        {
-            string diagnos = "";
-            if (((questions.Count) / 4 >= cnt) && (cnt >= 0))
-                diagnos = $"{userName}, вы - Идиот";
-            else if (((questions.Count) / 2 >= cnt) && (cnt > (questions.Count) / 4))
-                diagnos = $"{userName}, вы - Кретин";
-            else if (((questions.Count) / 4 < cnt) && ((questions.Count) / 2 >= cnt))
-                diagnos = $"{userName}, вы - Нормальный";
-            else if ((((questions.Count) / 2 > cnt)) && ((questions.Count) >= cnt))
-                diagnos = $"{userName}, вы - Гений";
-            return diagnos;
+					string QuestionAnswer = Console.ReadLine()!;
+					QuestionAnswer = QuestionAnswer.ToLower();
 
-                //switch (cnt)
-                //{
-                //    case 0: Console.WriteLine($"{userName}, вы - Идиот"); break;
-                //    case 1: Console.WriteLine($"{userName}, вы - Кретин"); break;
-                //    case 2: Console.WriteLine($"{userName}, вы - Дурак"); break;
-                //    case 3: Console.WriteLine($"{userName}, вы - Нормальный"); break;
-                //    case 4: Console.WriteLine($"{userName}, вы - Талант"); break;
-                //    case 5: Console.WriteLine($"{userName}, вы - Гений"); break;
-                //}
-        }
-        static (List<string>, List<string>) CreateQuestions(string newUserQuestion, string newUserAnswer,bool delete)
-        {
-            Random rnd = new Random();
-            List<string> questionsBank = new List<string>() { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
-            List<string> answersBank = new List<string>() { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
-            if (delete ==  false)
-            {
-                if ((newUserQuestion != null) && (newUserAnswer != null))
-                {
-                    questionsBank.Add(newUserQuestion);
-                    answersBank.Add(newUserAnswer);
-                }
-            }
-            else
-            {
-                questionsBank.Remove(newUserQuestion);
-                answersBank.Remove(newUserAnswer);
-            }
+					if (QuestionAnswer == simillarAnswers[randomIndex])
+					{
+						cnt++;
+					}
+					simillarQuestions.RemoveAt(randomIndex);
+					simillarAnswers.RemoveAt(randomIndex);
+				}//подбор вопрос
 
-                List<string> questions = new List<string>();
-            List<string> answers = new List<string>();
-
-            for (int i = 0; i < 5; i++)
-            {
-                int rndIndex = rnd.Next(questionsBank.Count);
-
-                questions.Add(questionsBank[rndIndex]);
-                answers.Add(answersBank[rndIndex]);
-
-                questionsBank.RemoveAt(rndIndex);
-                answersBank.RemoveAt(rndIndex);
-            }
-            return (questions, answers);
-        }
-        static bool PlayAgain(bool stop,string userAgreed)
-        {
-            stop = false;
-
-            if (userAgreed.Equals("да", StringComparison.CurrentCultureIgnoreCase))
-            {
-                stop = false;
-            }
-            else
-                stop = true;
-            return stop;
-		}
-        static string WannaPlay(string userName)
-        {
-			Console.WriteLine($"{userName}, готов сыграть в игру?");
-            string userAgreed = Console.ReadLine()!;
-            bool end = false;
-            while (end != true)
-            {
-                if (userAgreed.Equals("да", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    end = true;
-                }
-                else if (userAgreed.Equals("нет", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    end = true;
-                }
-                else
-                {
-                    Console.WriteLine("такого варианта нет");
-				}
+				diagnos = MakeADiagnos(questions, cnt);
+				cnt = 0;
+				GamingResults(cnt, diagnos, userName);
+				Console.WriteLine($"Ваш диагноз - {diagnos}");
 			}
-            return userAgreed;
 		}
-        static void GamingResults(int cnt,string diagnos, string userName)
-        {
-            List<string> results = new List<string>();
-            results.Add(userName);
-            results.Add(Convert.ToString(cnt));
-            results.Add(diagnos);
-        }
-    }
+		public static string MakeADiagnos(List<string> questions, int cnt)
+		{
+			List<string> diagnosises = new List<string>() { "Идиот", "Бездарь", "Кретин", "Нормис", "Сигмантей", "Гений" };
+			double rightAns = cnt;
+			double countQuestions = questions.Count;
+			double procent = rightAns / countQuestions * 100;
+			if (procent == 0)
+				return diagnosises[0];
+			else if (procent < 20)
+				return diagnosises[1];
+			else if (procent < 40)
+				return diagnosises[2];
+			else if (procent < 60)
+				return diagnosises[3];
+			else if (procent < 80)
+				return diagnosises[4];
+			else if (procent <= 100)
+				return diagnosises[5];
+			return "0";
+		}
+		static (List<string>, List<string>) CreateQuestions()//TODO Разобраться с вопросами почему так они тупо работают
+		{
+			Random rnd = new Random();
+			List<string> questionsBank = new List<string>() { "1)Где нужно хранить суету", "2)Сколько позиций в доте", "3)3", "4)4", "5)5", "6)6", "7)7", "8)8", "9)9", "10)10" };
+			List<string> answersBank = new List<string>() { "1)в барсетке", "2)2", "3)3", "4)4", "5)5", "6)6", "7)7", "8)8", "9)9", "10)10" };
+
+			File.AppendAllLines("гений идиот.txt", questionsBank);
+			
+
+			List<string> questions = new List<string>();
+			List<string> answers = new List<string>();
+
+			for (int i = 0; i < 5; i++)
+			{
+				int rndIndex = rnd.Next(questionsBank.Count);
+
+				questions.Add(questionsBank[rndIndex]);
+				answers.Add(answersBank[rndIndex]);
+
+				questionsBank.RemoveAt(rndIndex);
+				answersBank.RemoveAt(rndIndex);
+			}
+			return (questions, answers);
+		}
+		static bool WannaPlay(string userName)
+		{
+			Console.WriteLine($"{userName}, готов сыграть в игру?");
+			bool end = false;
+			while (end != true)
+			{
+				string userAgreed = Console.ReadLine()!;
+				userAgreed = userAgreed.ToLower();
+				if (userAgreed == "да")
+				{
+					return true;
+				}
+
+				if (userAgreed == "нет")
+				{
+					return false;
+				}
+
+				Console.WriteLine("такого варианта нет");
+			}
+
+			return false;
+		}
+		static void GamingResults(int cnt, string diagnos, string userName) //TODO: Сделать дописывание в файл
+		{
+			List<string> results = new List<string>();
+			results.Add($"Данные пользователя - {userName}");
+			results.Add(Convert.ToString(cnt));
+			results.Add(diagnos);
+			File.WriteAllLines("гений идиот.txt", results);
+		}
+		static void DeleteOrAddQuestions(string UserCreateQuestion)
+		{
+			if (UserCreateQuestion.Equals("добавить", StringComparison.CurrentCultureIgnoreCase))
+			{
+				Console.WriteLine("Введите вопрос, а после ответ на него");
+				string newUserQuestion = Console.ReadLine()!;
+				string newUserAnswer = Console.ReadLine()!;
+				
+			}
+			else if (UserCreateQuestion.Equals("удалить", StringComparison.CurrentCultureIgnoreCase))
+			{
+				Console.WriteLine("Напишите номер вопроса который хотите удалить");
+			}
+		}
+	}
 }
