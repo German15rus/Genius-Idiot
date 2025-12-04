@@ -11,6 +11,11 @@ namespace Genius___Idiot
 	{
 		static void Main(string[] args)
 		{
+			List<string> questionsBank = new List<string>() { "1)Где храниться суета", "2)Мужское есть", "3)", "4)4", "5)5", "6)6", "7)7", "8)8", "9)9", "10)10" };
+			List<string> answersBank = new List<string>() { "в барсетке", "жи есть", "3", "4", "5", "6", "7", "8", "9", "10" };
+			SavingQuestions(questionsBank, answersBank);
+
+
 			string diagnos = "Не установлен";
 			Console.WriteLine("Добро пожаловать на игру! Введите своё имя:");
 			string userName = Console.ReadLine()!;
@@ -18,12 +23,32 @@ namespace Genius___Idiot
 			Console.WriteLine($"Приятно познакомиться, {userName}.");
 
 			Console.WriteLine("Напишите номер того, что вас интересует.");
-			Console.WriteLine("1)Играть 2)Результаты 3)Удалить/Добавить");
-			string userAnswer = Console.ReadLine()!;
-			userAnswer = userAnswer.ToLower();
+			Console.WriteLine("1)Играть 2)Результаты 3)Удалить/Добавить");//File.Append - добавляет
+			int userAnswer = Convert.ToInt32(Console.ReadLine());
+			
+			if (userAnswer == 2)
+			{
 
+				Console.WriteLine("Результаты прошлых игр");
+				string[] fileData = File.ReadAllLines("..\\..\\..\\гений идиот.txt");
+				for (int i = 0; i < fileData.Length; i++)
+				{
+					string line = fileData[i];
+					string[] data = line.Split('#');
+					Console.WriteLine($"имя пользователя - {data[0]}, кол-во прав ответов - {data[1]}, диагноз - {data[2]}");
+				}
+			}
+			else if (userAnswer == 3)
+			{
+				Console.WriteLine("Уточните вы хотите Добавить/Удалить");
+				string UserCreateQuestion = Console.ReadLine()!;
+				DeleteOrAddQuestions(UserCreateQuestion, questionsBank, answersBank);
+				SavingQuestions(questionsBank, answersBank);
+
+			}
 			int cnt = 0;
-			(List<string> questions, List<string> answers) = CreateQuestions();
+			
+			(List<string> questions, List<string> answers) = CreateQuestions(questionsBank, answersBank);
 			while (WannaPlay(userName))
 			{
 				List<string> simillarQuestions = new List<string>(questions);
@@ -36,6 +61,7 @@ namespace Genius___Idiot
 
 					string QuestionAnswer = Console.ReadLine()!;
 					QuestionAnswer = QuestionAnswer.ToLower();
+					
 
 					if (QuestionAnswer == simillarAnswers[randomIndex])
 					{
@@ -43,7 +69,7 @@ namespace Genius___Idiot
 					}
 					simillarQuestions.RemoveAt(randomIndex);
 					simillarAnswers.RemoveAt(randomIndex);
-				}//подбор вопрос
+				}//подбор
 
 				diagnos = MakeADiagnos(questions, cnt);
 				cnt = 0;
@@ -53,7 +79,7 @@ namespace Genius___Idiot
 		}
 		public static string MakeADiagnos(List<string> questions, int cnt)
 		{
-			List<string> diagnosises = new List<string>() { "Идиот", "Бездарь", "Кретин", "Нормис", "Сигмантей", "Гений" };
+			List<string> diagnosises = new List<string>() { "Идиот", "Бездарь", "Живчик", "Нормис", "Сигмантей", "Гений" };
 			double rightAns = cnt;
 			double countQuestions = questions.Count;
 			double procent = rightAns / countQuestions * 100;
@@ -71,14 +97,9 @@ namespace Genius___Idiot
 				return diagnosises[5];
 			return "0";
 		}
-		static (List<string>, List<string>) CreateQuestions()//TODO Разобраться с вопросами почему так они тупо работают
+		static (List<string>, List<string>) CreateQuestions(List<string> questionsBank, List<string> answersBank)
 		{
 			Random rnd = new Random();
-			List<string> questionsBank = new List<string>() { "1)Где нужно хранить суету", "2)Сколько позиций в доте", "3)3", "4)4", "5)5", "6)6", "7)7", "8)8", "9)9", "10)10" };
-			List<string> answersBank = new List<string>() { "1)в барсетке", "2)2", "3)3", "4)4", "5)5", "6)6", "7)7", "8)8", "9)9", "10)10" };
-
-			File.AppendAllLines("гений идиот.txt", questionsBank);
-			
 
 			List<string> questions = new List<string>();
 			List<string> answers = new List<string>();
@@ -118,27 +139,38 @@ namespace Genius___Idiot
 
 			return false;
 		}
-		static void GamingResults(int cnt, string diagnos, string userName) //TODO: Сделать дописывание в файл
+		static void GamingResults(int cnt, string diagnos, string userName)
 		{
-			List<string> results = new List<string>();
-			results.Add($"Данные пользователя - {userName}");
-			results.Add(Convert.ToString(cnt));
-			results.Add(diagnos);
-			File.WriteAllLines("гений идиот.txt", results);
+
+			string results = ($"{userName}#{cnt}#{diagnos}");
+			
+			File.AppendAllText("..\\..\\..\\гений идиот.txt", results + Environment.NewLine);
 		}
-		static void DeleteOrAddQuestions(string UserCreateQuestion)
+		static void DeleteOrAddQuestions(string UserCreateQuestion, List<string> questionsBank, List<string>answersBank)
 		{
 			if (UserCreateQuestion.Equals("добавить", StringComparison.CurrentCultureIgnoreCase))
 			{
-				Console.WriteLine("Введите вопрос, а после ответ на него");
+				Console.WriteLine("Введите вопрос, а после ответ на него:");
+				
 				string newUserQuestion = Console.ReadLine()!;
 				string newUserAnswer = Console.ReadLine()!;
+				
+				questionsBank.Add($"{questionsBank.Count}){newUserQuestion}");
+				answersBank.Add(newUserAnswer);
 				
 			}
 			else if (UserCreateQuestion.Equals("удалить", StringComparison.CurrentCultureIgnoreCase))
 			{
 				Console.WriteLine("Напишите номер вопроса который хотите удалить");
+				int numberQueston = Convert.ToInt32(Console.ReadLine()) - 1;
+				questionsBank.RemoveAt(numberQueston);
+				answersBank.RemoveAt(numberQueston);
 			}
+		}
+		static void SavingQuestions(List<string> questionsBank, List<string> answersBank)
+		{
+			File.WriteAllLines("..\\..\\..\\Questions&Answers.txt", questionsBank);
+			File.WriteAllLines("..\\..\\..\\Questions&Answers.txt", answersBank);
 		}
 	}
 }
