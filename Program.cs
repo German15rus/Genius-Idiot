@@ -11,12 +11,12 @@ namespace Genius___Idiot
 	{
 		static void Main(string[] args)
 		{
-			List<string> questionsBank = new List<string>();
-			List<string> answersBank = new List<string>();
-			File.ReadAllLines("..\\..\\..\\Questions&Answers.txt", questionsBank);//TODO : Брать вопросы из файла и там же удалять 
 			List<string> questionsBank = new List<string>() { "1)Где храниться суета", "2)Мужское есть", "3)Как зовут кошку",
 				"4)", "5)5", "6)6", "7)7", "8)8", "9)9", "10)10" };
-			List<string> answersBank = new List<string>() { "в барсетке", "жи есть", "бонтик", "Иосиф", "5", "6", "7", "8", "9", "10" };
+			List<string> answersBank = new List<string>() { "в барсетке", "жи есть", "бонтик", "4", "5", "6", "7", "8", "9", "10" };
+			//questionsBank = File.ReadAllLines("..\\..\\..\\Questions.txt").ToList();
+			//questionsBank = File.ReadAllLines("..\\..\\..\\Answers.txt").ToList();
+			
 			SavingQuestions(questionsBank, answersBank);
 
 
@@ -159,7 +159,7 @@ namespace Genius___Idiot
 				string newUserQuestion = Console.ReadLine()!;
 				string newUserAnswer = Console.ReadLine()!;
 				
-				questionsBank.Add($"{questionsBank.Count}){newUserQuestion}");
+				questionsBank.Add($"{questionsBank.Count + 1}){newUserQuestion}");
 				answersBank.Add(newUserAnswer);
 				
 			}
@@ -173,8 +173,8 @@ namespace Genius___Idiot
 		}
 		static void SavingQuestions(List<string> questionsBank, List<string> answersBank)
 		{
-			File.WriteAllLines("..\\..\\..\\Questions&Answers.txt", questionsBank);
-			File.WriteAllLines("..\\..\\..\\Questions&Answers.txt", answersBank);
+			File.WriteAllLines("..\\..\\..\\Questions.txt", questionsBank);
+			File.WriteAllLines("..\\..\\..\\Answers.txt", answersBank);
 		}
 	}
 }
