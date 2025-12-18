@@ -21,12 +21,14 @@ namespace Genius_IdiotWinFormsApp
 		int numberQuestion = 1;
 		int CountRightAnswers = 0;
 		int cnt = 0;
-
+		string diagnos = "";
+		string userName = "";
 
 
 		public PlayingGameForms()
 		{
 			InitializeComponent();
+			
 		}
 
 		private void PlayingGameForms_Load(object sender, EventArgs e)
@@ -48,6 +50,7 @@ namespace Genius_IdiotWinFormsApp
 			}
 			numberQuestion++;
 			cnt++;
+
 		}
 
 		private void AnswerButton_Click(object sender, EventArgs e)
@@ -60,14 +63,26 @@ namespace Genius_IdiotWinFormsApp
 			UserAnswerTextBox.Text = "";
 			if (cnt > 5)
 			{
-				MakeADiagnos(CountRightAnswers);
+	
+					Hide();
+					AskName name = new AskName();
+					name.ShowDialog();
+					userName = name.userName;
+				if (userName != null)
+				{
+					diagnos = MakeADiagnos(CountRightAnswers, userName);
+					WritingResults(diagnos, userName);
+					Hide();
+					Form1 menu = new Form1();
+					menu.Show();
+				}
 			}
 			int rndIndex = rnd.Next(questionsBank.Count);
 			questions = (questionsBank[rndIndex]);
 			answers = (answersBank[rndIndex]);
 			questionsBank.RemoveAt(rndIndex);
 			answersBank.RemoveAt(rndIndex);
-			
+
 			NumberQuestionLabel.Text = $"Вопрос №{numberQuestion}";
 			QuestionLabel.Text = questions;
 			if (UserAnswerTextBox.Text == answers)
@@ -76,24 +91,55 @@ namespace Genius_IdiotWinFormsApp
 			}
 			numberQuestion++;
 		}
-		private void MakeADiagnos(int CountRightAnswers)
+		private string MakeADiagnos(int CountRightAnswers,string userName)
 		{
 			List<string> diagnosises = new List<string>() { "Идиот", "Бездарь", "Живчик", "Нормис", "Сигмантей", "Гений" };
 			double rightAns = CountRightAnswers;
 			double countQuestions = 5;
+			string diagnos = "";
 			double procent = rightAns / countQuestions * 100;
 			if (procent == 0)
-				 MessageBox.Show(diagnosises[0]);
+			{
+				MessageBox.Show($"{userName}, Ваш диагноз - {diagnosises[0]}");
+				return (diagnos = diagnosises[0]);
+			}
 			else if (procent < 20)
-				MessageBox.Show(diagnosises[1]);
+			{
+				MessageBox.Show($"{userName}, Ваш диагноз - {diagnosises[1]}");
+				return (diagnos = diagnosises[1]);
+			}
 			else if (procent < 40)
-				MessageBox.Show(diagnosises[2]);
+			{
+				MessageBox.Show($"{userName}, Ваш диагноз - {diagnosises[2]}");
+				return (diagnos = diagnosises[2]);
+			}
 			else if (procent < 60)
-				MessageBox.Show(diagnosises[3]);
+			{
+				MessageBox.Show($"{userName}, Ваш диагноз - {diagnosises[3]}");
+				return (diagnos = diagnosises[3]);
+			}
 			else if (procent < 80)
-				MessageBox.Show(diagnosises[4]);
+			{
+				MessageBox.Show($"{userName}, Ваш диагноз - {diagnosises[4]}");
+				return (diagnos = diagnosises[4]);
+			}
 			else if (procent <= 100)
-				MessageBox.Show(diagnosises[5]);
+			{
+				MessageBox.Show($"{userName}, Ваш диагноз - {diagnosises[5]}");
+				return (diagnos = diagnosises[5]);
+			}
+			return (diagnos = diagnosises[0]);
+		}
+		private void WritingResults(string diagnos,string userName)
+		{
+			string results = ($"{userName}#{diagnos}");
+
+			File.AppendAllText("..\\..\\..\\гений идиот.txt", results + Environment.NewLine);
+		}
+
+		private void UserAnswerTextBox_TextChanged(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

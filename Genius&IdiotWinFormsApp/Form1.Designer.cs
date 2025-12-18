@@ -56,11 +56,12 @@
 			ResultButton.TabIndex = 1;
 			ResultButton.Text = "Результаты прошлых игр";
 			ResultButton.UseVisualStyleBackColor = true;
+			ResultButton.Click += ResultButton_Click;
 			// 
 			// PlayButton
 			// 
 			PlayButton.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
-			PlayButton.Location = new Point(395, 317);
+			PlayButton.Location = new Point(396, 317);
 			PlayButton.Name = "PlayButton";
 			PlayButton.Size = new Size(191, 85);
 			PlayButton.TabIndex = 2;

@@ -24,9 +24,17 @@ namespace Genius_IdiotWinFormsApp
 
 		private void PlayButton_Click(object sender, EventArgs e)
 		{
+
 			Hide();
 			PlayingGameForms play = new PlayingGameForms();
 			play.Show();
+		}
+
+		private void ResultButton_Click(object sender, EventArgs e)
+		{
+			Hide();
+			Results res = new Results();
+			res.Show();
 		}
 	}
 }

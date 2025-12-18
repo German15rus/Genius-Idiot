@@ -72,6 +72,7 @@
 			UserAnswerTextBox.Name = "UserAnswerTextBox";
 			UserAnswerTextBox.Size = new Size(517, 39);
 			UserAnswerTextBox.TabIndex = 3;
+			UserAnswerTextBox.TextChanged += UserAnswerTextBox_TextChanged;
 			// 
 			// PlayingGameForms
 			// 
