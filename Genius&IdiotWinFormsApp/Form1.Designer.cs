@@ -85,6 +85,7 @@
             AddDelQuestionButton.TabIndex = 3;
             AddDelQuestionButton.Text = "Удалить/Добавить Вопрос";
             AddDelQuestionButton.UseVisualStyleBackColor = true;
+            AddDelQuestionButton.Click += AddDelQuestionButton_Click;
             // 
             // menuPictureBox
             // 

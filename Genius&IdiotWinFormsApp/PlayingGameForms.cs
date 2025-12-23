@@ -13,8 +13,10 @@ namespace Genius_IdiotWinFormsApp
     public partial class PlayingGameForms : Form
     {
         List<string> questionsBank = new List<string>() { "Где храниться суета", "Мужское есть", "Как зовут кошку",
-                "Когда вы играете в покер играете", "5", "6", "7", "8", "9", "10" };
-        List<string> answersBank = new List<string>() { "в барсетке", "жи есть", "бонтик", "между парами", "5", "6", "7", "8", "9", "10" };
+                "Когда вы играете в покер играете", "Что бывает во вторник в 14:20 по МСК?", 
+            "Что тебе нужно если у тебя очень много проблем в жизни?", "7", "8", "9", "10" };
+        List<string> answersBank = new List<string>() { "в барсетке", "жи есть", "бонтик", "между парами", "олимпиадка",
+            "отладка", "7", "8", "9", "10" };
         Random rnd = new Random();
         string questions = "";
         string answers = "";

@@ -41,5 +41,12 @@ namespace Genius_IdiotWinFormsApp
         {
             this.Close();
         }
+
+        private void AddDelQuestionButton_Click(object sender, EventArgs e)
+        {
+            Hide();
+            AddDelQuestions questionsMenu = new AddDelQuestions();
+            questionsMenu.Show();
+        }
     }
 }

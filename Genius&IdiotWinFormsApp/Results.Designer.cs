@@ -30,7 +30,7 @@
         {
             QuitButton = new Button();
             resultsLabel = new Label();
-            textBoxResults = new TextBox();
+            resulterLabel = new Label();
             SuspendLayout();
             // 
             // QuitButton
@@ -53,13 +53,15 @@
             resultsLabel.Size = new Size(100, 23);
             resultsLabel.TabIndex = 0;
             // 
-            // textBoxResults
+            // resulterLabel
             // 
-            textBoxResults.Location = new Point(360, 64);
-            textBoxResults.Name = "textBoxResults";
-            textBoxResults.Size = new Size(125, 27);
-            textBoxResults.TabIndex = 2;
-            textBoxResults.TextChanged += textBoxResults_TextChanged;
+            resulterLabel.AutoSize = true;
+            resulterLabel.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            resulterLabel.Location = new Point(338, 41);
+            resulterLabel.Name = "resulterLabel";
+            resulterLabel.Size = new Size(117, 46);
+            resulterLabel.TabIndex = 3;
+            resulterLabel.Text = "label1";
             // 
             // Results
             // 
@@ -67,7 +69,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(255, 128, 0);
             ClientSize = new Size(914, 600);
-            Controls.Add(textBoxResults);
+            Controls.Add(resulterLabel);
             Controls.Add(resultsLabel);
             Controls.Add(QuitButton);
             Margin = new Padding(3, 4, 3, 4);
@@ -80,6 +82,6 @@
         #endregion
         private Button QuitButton;
         private Label resultsLabel;
-        private TextBox textBoxResults;
+        private Label resulterLabel;
     }
 }

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,27 +16,23 @@ namespace Genius_IdiotWinFormsApp
     {
         public Results()
         {
-            InitializeComponent();
-            if (File.Exists("гений идиот.txt"))
+                InitializeComponent();
+            if (File.Exists("..\\..\\..\\гений идиот.txt"))
             {
-                textBoxResults.Text = File.ReadAllText("гений идиот.txt");
-                textBoxResults.ScrollBars = ScrollBars.Both;
-                textBoxResults.Multiline = true;
-                textBoxResults.WordWrap = false;
+                string[] lines = File.ReadAllLines("..\\..\\..\\гений идиот.txt");
+                resulterLabel.Text = string.Join(Environment.NewLine, lines);
             }
             else
             {
                 MessageBox.Show("Файл не найден!");
             }
+            
         }
         private void QuitButton_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        private void textBoxResults_TextChanged(object sender, EventArgs e)
-        {
-            MessageBox.Show("Вы не можете редактировать файл!");
+            Form1 menu = new Form1();
+            menu.Show();
         }
     }
 }
