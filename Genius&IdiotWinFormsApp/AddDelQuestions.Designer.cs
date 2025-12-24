@@ -66,6 +66,7 @@
             delButton.TabIndex = 2;
             delButton.Text = "Удалить";
             delButton.UseVisualStyleBackColor = true;
+            delButton.Click += delButton_Click;
             // 
             // QuitButton
             // 

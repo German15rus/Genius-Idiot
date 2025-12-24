@@ -26,7 +26,16 @@ namespace Genius_IdiotWinFormsApp
 
         private void AddButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("");
+            Hide();
+            AddQuestion addMenu = new AddQuestion();
+            addMenu.Show();
+        }
+
+        private void delButton_Click(object sender, EventArgs e)
+        {
+            Hide();
+            DelQuestion delMenu = new DelQuestion();
+            delMenu.Show();
         }
     }
 }
