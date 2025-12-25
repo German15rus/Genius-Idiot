@@ -12,7 +12,10 @@ namespace Genius_IdiotWinFormsApp
 {
     public partial class AddQuestion : Form
     {
-        public AddQuestion()
+		List<string> userQuestion = new List<string>() { };
+		int cnt = 0;
+        
+		public AddQuestion()
         {
             InitializeComponent();
         }
@@ -26,17 +29,18 @@ namespace Genius_IdiotWinFormsApp
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            List<string> userQuestion = new List<string>() { };
+            
             userQuestion.Add(newQuestionTextBox.Text);
             newQuestionTextBox.Text = "";
-            int cnt = 0;
+            
             cnt++;
             if (cnt == 2)
             {
-                questionsBank.Add(userQuestion[0]);
-                answersBank.Add(userQuestion[1]);
-                File.WriteAllLines("..\\..\\..\\Questions.txt", questionsBank);
-                File.WriteAllLines("..\\..\\..\\Answers.txt", answersBank);
+                string g =(userQuestion[0]);
+                string z =(userQuestion[1]);
+                File.AppendAllText("..\\..\\..\\Questions.txt",g + Environment.NewLine);
+                File.AppendAllText("..\\..\\..\\Answers.txt", z+ Environment.NewLine);
+                MessageBox.Show("Вопрос добавлен");
                 Hide();
                 Form1 menu = new Form1();
                 menu.Show();

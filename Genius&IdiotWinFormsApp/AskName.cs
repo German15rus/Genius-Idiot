@@ -20,11 +20,17 @@ namespace Genius_IdiotWinFormsApp
 
 		private void UserName_TextChanged(object sender, EventArgs e)
 		{
-			userName = UserName.Text;
+			
 		}
 
 		private void NameButton_Click(object sender, EventArgs e)
 		{
+			userName = UserName.Text;
+			if (double.TryParse(userName, out _))
+			{
+				MessageBox.Show("Неверный ввод");
+				UserName.Text = "";
+			}
 			Hide();
 		}
 	}
