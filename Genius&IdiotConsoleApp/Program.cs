@@ -7,17 +7,40 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Genius___Idiot
 {
+	class Question
+	{
+		public string Text;
+		public string Answer;
+	}
 	internal class Program
 	{
 		static void Main(string[] args)
 		{
-			List<string> questionsBank = new List<string>() { "1)Где храниться суета", "2)Мужское есть", "3)Как зовут кошку",
-				"4)", "5)5", "6)6", "7)7", "8)8", "9)9", "10)10" };
-			List<string> answersBank = new List<string>() { "в барсетке", "жи есть", "бонтик", "4", "5", "6", "7", "8", "9", "10" };
+			Question question1 = new Question();
+
+			List<Question> questions = new List<Question>();
+			question1.Text = "1)Где храниться суета";
+			question1.Answer = "в барсетке";
+			questions.Add(question1);
+
+			Question question2 = new Question();
+			question2.Text = "2)Мужское есть";
+			question2.Answer = "жи есть";
+			questions.Add(question2);
+
+			Question question3 = new Question();
+			question3.Text = "3)Как зовут кошку";
+			question3.Answer = "бонтик";
+			questions.Add(question3);
+
+
+			//List<string> questionsBank = new List<string>() { "1)Где храниться суета", "2)Мужское есть", "3)Как зовут кошку",
+			//	"4)", "5)5", "6)6", "7)7", "8)8", "9)9", "10)10" };
+			//List<string> answersBank = new List<string>() { "в барсетке", "жи есть", "бонтик", "4", "5", "6", "7", "8", "9", "10" };
 			//questionsBank = File.ReadAllLines("..\\..\\..\\Questions.txt").ToList();
 			//questionsBank = File.ReadAllLines("..\\..\\..\\Answers.txt").ToList();
 			
-			SavingQuestions(questionsBank, answersBank);
+			SavingQuestions(questions);
 
 
 			string diagnos = "Не установлен";
@@ -46,22 +69,22 @@ namespace Genius___Idiot
 			{
 				Console.WriteLine("Уточните вы хотите Добавить/Удалить");
 				string UserCreateQuestion = Console.ReadLine()!;
-				DeleteOrAddQuestions(UserCreateQuestion, questionsBank, answersBank);
-				SavingQuestions(questionsBank, answersBank);
+				DeleteOrAddQuestions(UserCreateQuestion, questions);
+				SavingQuestions(questions);
 
 			}
 			int cnt = 0;
 			
-			(List<string> questions, List<string> answers) = CreateQuestions(questionsBank, answersBank);
+			//(List<string> gameQuestions, List<string> gameAnswers) = CreateQuestions(questions);
 			while (WannaPlay(userName))
 			{
-				List<string> simillarQuestions = new List<string>(questions);
-				List<string> simillarAnswers = new List<string>(answers);
+				List<string> simillarQuestions = new List<string>(gameQuestions);
+				List<string> simillarAnswers = new List<string>(gameAnswers);
 				for (int i = 0; i != questions.Count; i++)
 				{
 					Random rnd = new Random();
-					int randomIndex = rnd.Next(simillarQuestions.Count);
-					Console.WriteLine(simillarQuestions[randomIndex]);
+					int randomIndex = rnd.Next(questions.Count);
+					Console.WriteLine(questions[randomIndex]);
 
 					string QuestionAnswer = Console.ReadLine()!;
 					QuestionAnswer = QuestionAnswer.ToLower();
@@ -81,7 +104,7 @@ namespace Genius___Idiot
 				Console.WriteLine($"Ваш диагноз - {diagnos}");
 			}
 		}
-		public static string MakeADiagnos(List<string> questions, int cnt)
+		public static string MakeADiagnos(List<Question> questions, int cnt)
 		{
 			List<string> diagnosises = new List<string>() { "Идиот", "Бездарь", "Живчик", "Нормис", "Сигмантей", "Гений" };
 			double rightAns = cnt;
@@ -101,24 +124,21 @@ namespace Genius___Idiot
 				return diagnosises[5];
 			return "0";
 		}
-		static (List<string>, List<string>) CreateQuestions(List<string> questionsBank, List<string> answersBank)
+		static (List<string>, List<string>) CreateQuestions(List<Question> questions)
 		{
 			Random rnd = new Random();
 
-			List<string> questions = new List<string>();
-			List<string> answers = new List<string>();
+			List<string> questions1 = new List<string>();
+			List<string> answer1 = new List<string>();
 
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < questions.Count; i++)
 			{
-				int rndIndex = rnd.Next(questionsBank.Count);
-
-				questions.Add(questionsBank[rndIndex]);
-				answers.Add(answersBank[rndIndex]);
-
-				questionsBank.RemoveAt(rndIndex);
-				answersBank.RemoveAt(rndIndex);
+				int rndIndex = rnd.Next(questions.Count);
+				questions1.Add(questions[rndIndex].Text);
+				answer1.Add(questions[rndIndex].Answer);
+				questions.RemoveAt(rndIndex);
 			}
-			return (questions, answers);
+			return (questions1, answer1);
 		}
 		static bool WannaPlay(string userName)
 		{
@@ -150,31 +170,37 @@ namespace Genius___Idiot
 			
 			File.AppendAllText("..\\..\\..\\гений идиот.txt", results + Environment.NewLine);
 		}
-		static void DeleteOrAddQuestions(string UserCreateQuestion, List<string> questionsBank, List<string>answersBank)
+		static void DeleteOrAddQuestions(string UserCreateQuestion, List<Question> questions)
 		{
+			Question newQuestion = new Question();
 			if (UserCreateQuestion.Equals("добавить", StringComparison.CurrentCultureIgnoreCase))
 			{
 				Console.WriteLine("Введите вопрос, а после ответ на него:");
 				
-				string newUserQuestion = Console.ReadLine()!;
-				string newUserAnswer = Console.ReadLine()!;
-				
-				questionsBank.Add($"{questionsBank.Count + 1}){newUserQuestion}");
-				answersBank.Add(newUserAnswer);
-				
+				string newQuestionText = Console.ReadLine()!;
+				string newQuestionAnswer = Console.ReadLine()!;
+				newQuestion.Text = newQuestionText;
+				newQuestion.Answer = newQuestionAnswer;
+				questions.Add(newQuestion);
 			}
 			else if (UserCreateQuestion.Equals("удалить", StringComparison.CurrentCultureIgnoreCase))
 			{
 				Console.WriteLine("Напишите номер вопроса который хотите удалить");
 				int numberQueston = Convert.ToInt32(Console.ReadLine()) - 1;
-				questionsBank.RemoveAt(numberQueston);
-				answersBank.RemoveAt(numberQueston);
+				questions.RemoveAt(numberQueston);
 			}
 		}
-		static void SavingQuestions(List<string> questionsBank, List<string> answersBank)
+		static void SavingQuestions(List<Question> questions)
 		{
-			File.WriteAllLines("..\\..\\..\\Questions.txt", questionsBank);
-			File.WriteAllLines("..\\..\\..\\Answers.txt", answersBank);
+			List<string> fileQuestion = new List<string>();
+			List<string> fileAnswer = new List<string>();
+			for (int i = 0; i < questions.Count; i++)
+			{
+				fileQuestion.Add(questions[i].Text);
+				fileAnswer.Add(questions[i].Answer);
+			}
+			File.WriteAllLines("..\\..\\..\\Questions.txt", fileQuestion);
+			File.WriteAllLines("..\\..\\..\\Answers.txt", fileAnswer);
 		}
 	}
 }
