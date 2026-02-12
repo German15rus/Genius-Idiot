@@ -16,32 +16,13 @@ namespace Genius___Idiot
 	{
 		static void Main(string[] args)
 		{
-			Question question1 = new Question();
 
-			List<Question> questions = new List<Question>();
-			question1.Text = "1)Где храниться суета";
-			question1.Answer = "в барсетке";
-			questions.Add(question1);
-
-			Question question2 = new Question();
-			question2.Text = "2)Мужское есть";
-			question2.Answer = "жи есть";
-			questions.Add(question2);
-
-			Question question3 = new Question();
-			question3.Text = "3)Как зовут кошку";
-			question3.Answer = "бонтик";
-			questions.Add(question3);
-
-
+			List<Question> questions = CreateQuestions();
 			//List<string> questionsBank = new List<string>() { "1)Где храниться суета", "2)Мужское есть", "3)Как зовут кошку",
 			//	"4)", "5)5", "6)6", "7)7", "8)8", "9)9", "10)10" };
 			//List<string> answersBank = new List<string>() { "в барсетке", "жи есть", "бонтик", "4", "5", "6", "7", "8", "9", "10" };
-			//questionsBank = File.ReadAllLines("..\\..\\..\\Questions.txt").ToList();
-			//questionsBank = File.ReadAllLines("..\\..\\..\\Answers.txt").ToList();
 			
 			SavingQuestions(questions);
-
 
 			string diagnos = "Не установлен";
 			Console.WriteLine("Добро пожаловать на игру! Введите своё имя:");
@@ -50,7 +31,7 @@ namespace Genius___Idiot
 			Console.WriteLine($"Приятно познакомиться, {userName}.");
 
 			Console.WriteLine("Напишите номер того, что вас интересует.");
-			Console.WriteLine("1)Играть 2)Результаты 3)Удалить/Добавить");//File.Append - добавляет
+			Console.WriteLine("1)Играть 2)Результаты 3)Удалить/Добавить");
 			int userAnswer = Convert.ToInt32(Console.ReadLine());
 			
 			if (userAnswer == 2)
@@ -74,30 +55,24 @@ namespace Genius___Idiot
 
 			}
 			int cnt = 0;
-			
-			//(List<string> gameQuestions, List<string> gameAnswers) = CreateQuestions(questions);
-			while (WannaPlay(userName))
+			int gameLength = questions.Count;
+			while (PlayAgain(userName))
 			{
-				List<string> simillarQuestions = new List<string>(gameQuestions);
-				List<string> simillarAnswers = new List<string>(gameAnswers);
-				for (int i = 0; i != questions.Count; i++)
+                List<Question> gameQuestions = CreateQuestions();
+                for (int i = 0; i < gameLength; i++)
 				{
 					Random rnd = new Random();
-					int randomIndex = rnd.Next(questions.Count);
-					Console.WriteLine(questions[randomIndex]);
+					int randomIndex = rnd.Next(gameQuestions.Count);
+					Console.WriteLine(gameQuestions[randomIndex].Text);
 
 					string QuestionAnswer = Console.ReadLine()!;
 					QuestionAnswer = QuestionAnswer.ToLower();
-					
-
-					if (QuestionAnswer == simillarAnswers[randomIndex])
+					if (QuestionAnswer == gameQuestions[randomIndex].Answer)
 					{
 						cnt++;
 					}
-					simillarQuestions.RemoveAt(randomIndex);
-					simillarAnswers.RemoveAt(randomIndex);
-				}//подбор
-
+					gameQuestions.RemoveAt(randomIndex);
+				}
 				diagnos = MakeADiagnos(questions, cnt);
 				cnt = 0;
 				GamingResults(cnt, diagnos, userName);
@@ -124,25 +99,40 @@ namespace Genius___Idiot
 				return diagnosises[5];
 			return "0";
 		}
-		static (List<string>, List<string>) CreateQuestions(List<Question> questions)
+		static List<Question> CreateQuestions()
 		{
+            List<Question> questions = new List<Question>();
+
+            Question question1 = new Question();
+            question1.Text = "1)Где храниться суета";
+            question1.Answer = "в барсетке";
+            questions.Add(question1);
+
+            Question question2 = new Question();
+            question2.Text = "2)Мужское есть";
+            question2.Answer = "жи есть";
+            questions.Add(question2);
+
+            Question question3 = new Question();
+            question3.Text = "3)Как зовут кошку";
+            question3.Answer = "бонтик";
+            questions.Add(question3);
 			Random rnd = new Random();
+			//List<string> questions1 = new List<string>();
+			//List<string> answer1 = new List<string>();
 
-			List<string> questions1 = new List<string>();
-			List<string> answer1 = new List<string>();
-
-			for (int i = 0; i < questions.Count; i++)
-			{
-				int rndIndex = rnd.Next(questions.Count);
-				questions1.Add(questions[rndIndex].Text);
-				answer1.Add(questions[rndIndex].Answer);
-				questions.RemoveAt(rndIndex);
-			}
-			return (questions1, answer1);
+			//for (int i = 0; i < questions.Count; i++)
+			//{
+			//	int rndIndex = rnd.Next(questions.Count);
+			//	questions1.Add(questions[rndIndex].Text);
+			//	answer1.Add(questions[rndIndex].Answer);
+			//	questions.RemoveAt(rndIndex);
+			//}
+			return questions;
 		}
-		static bool WannaPlay(string userName)
+		static bool PlayAgain(string userName)
 		{
-			Console.WriteLine($"{userName}, готов сыграть в игру?");
+			Console.WriteLine($"{userName}, готов сыграть в игру? Введи ответ: Да или Нет.");
 			bool end = false;
 			while (end != true)
 			{
@@ -152,22 +142,17 @@ namespace Genius___Idiot
 				{
 					return true;
 				}
-
 				if (userAgreed == "нет")
 				{
 					return false;
 				}
-
-				Console.WriteLine("такого варианта нет");
+				Console.WriteLine("Введите: Да или Нет");
 			}
-
 			return false;
 		}
 		static void GamingResults(int cnt, string diagnos, string userName)
 		{
-
 			string results = ($"{userName}#{cnt}#{diagnos}");
-			
 			File.AppendAllText("..\\..\\..\\гений идиот.txt", results + Environment.NewLine);
 		}
 		static void DeleteOrAddQuestions(string UserCreateQuestion, List<Question> questions)
