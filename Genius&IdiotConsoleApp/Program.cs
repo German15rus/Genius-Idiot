@@ -27,9 +27,26 @@ namespace Genius___Idiot
             }
             return questions;
         }
-        void Add(Question question) 
-        {//TODO
-            File.AppendAllText(question.Text, textsPath);
+        public void Add(Question question) 
+        {//DONE
+            File.AppendAllText(textsPath, question.Text + Environment.NewLine);
+            File.AppendAllText(answersPath, question.Answer + Environment.NewLine);
+        }
+        public void Remove(int questionIndex)
+        {
+            //удаляю вопрос
+            var withoutDel = File.ReadAllLines(textsPath).ToList();
+            withoutDel.RemoveAt(questionIndex);
+            File.WriteAllLines(textsPath, withoutDel);
+            //удаляю ответ
+            withoutDel = File.ReadAllLines(answersPath).ToList();
+            withoutDel.RemoveAt(questionIndex);
+            File.WriteAllLines(textsPath, withoutDel);
+        }
+        public void Finish(int cnt, string diagnos, string userName)
+        {
+            string results = ($"{userName}#{cnt}#{diagnos}");
+            File.AppendAllText("..\\..\\..\\гений идиот.txt", results + Environment.NewLine);
         }
     }
     class User
@@ -48,19 +65,11 @@ namespace Genius___Idiot
         static void Main(string[] args)
         {
             List<Question> questions = CreateQuestions();
-            //List<string> questionsBank = new List<string>() { "1)Где храниться суета", "2)Мужское есть", "3)Как зовут кошку",
-            //	"4)Что ела кошка толетоле?", "5)Сколько лет леброну джеймсу", "6)6", "7)7", "8)8", "9)9", "10)10" };
-            //List<string> answersBank = new List<string>() { "в барсетке", "жи есть", "бонтик", "латяо", "41", "6", "7", "8", "9", "10" };
 
             SaveQuestions(questions);
 
             User user1 = new User();
 
-
-            //Question question1 = new Question();
-            //question1.Text = "1)Где храниться суета";
-            //question1.Answer = "в барсетке";
-            //questions.Add(question1);
             Console.WriteLine("Добро пожаловать на игру! Введите своё имя:");
             user1.Name = Console.ReadLine()!;
 
@@ -73,7 +82,6 @@ namespace Genius___Idiot
 
             if (userAnswer == 2)
             {
-
                 Console.WriteLine("Результаты прошлых игр");
                 string[] fileData = File.ReadAllLines("..\\..\\..\\гений идиот.txt");
                 for (int i = 0; i < fileData.Length; i++)
@@ -95,7 +103,6 @@ namespace Genius___Idiot
 
             while (PlayAgain(user1.Name))
             {
-
                 for (int i = 0; i < questionsCount; i++)
                 {
                     Random rnd = new Random();
