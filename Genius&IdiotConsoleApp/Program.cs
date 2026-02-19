@@ -9,64 +9,17 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Genius___Idiot
 {
-    class QuestionsStorage
-    {
-        private string textsPath = "..\\..\\..\\Questions";
-        private string answersPath = "..\\..\\..\\Answers";
-        public List<Question> GetAll()
-        {
-            string[] questionsTexts = File.ReadAllLines(textsPath);
-            string[] questionsAnswers = File.ReadAllLines(answersPath);
-            List<Question> questions = new List<Question>();
-            for (int i = 0;  i < questionsTexts.Length; i++)
-            {
-                Question question = new Question();
-                question.Text = questionsTexts[i];
-                question.Answer = questionsAnswers[i];
-                questions.Add(question);
-            }
-            return questions;
-        }
-        public void Add(Question question) 
-        {//DONE
-            File.AppendAllText(textsPath, question.Text + Environment.NewLine);
-            File.AppendAllText(answersPath, question.Answer + Environment.NewLine);
-        }
-        public void Remove(int questionIndex)
-        {
-            //удаляю вопрос
-            var withoutDel = File.ReadAllLines(textsPath).ToList();
-            withoutDel.RemoveAt(questionIndex);
-            File.WriteAllLines(textsPath, withoutDel);
-            //удаляю ответ
-            withoutDel = File.ReadAllLines(answersPath).ToList();
-            withoutDel.RemoveAt(questionIndex);
-            File.WriteAllLines(textsPath, withoutDel);
-        }
-        public void Finish(int cnt, string diagnos, string userName)
-        {
-            string results = ($"{userName}#{cnt}#{diagnos}");
-            File.AppendAllText("..\\..\\..\\гений идиот.txt", results + Environment.NewLine);
-        }
-    }
-    class User
-    {
-        public string Name;
-        public string Diagnos;
-        public int CorrectAnswers;
-    }
-    class Question
-    {
-        public string Text;
-        public string Answer;
-    }
     internal class Program
     {
+
         static void Main(string[] args)
         {
-            List<Question> questions = CreateQuestions();
+            UsersStorage res = new UsersStorage();
 
-            SaveQuestions(questions);
+            QuestionsStorage questionsRepository = new QuestionsStorage();
+            List<Question> questions = questionsRepository.GetAll();
+
+            questionsRepository.Save(questions);
 
             User user1 = new User();
 
@@ -83,12 +36,10 @@ namespace Genius___Idiot
             if (userAnswer == 2)
             {
                 Console.WriteLine("Результаты прошлых игр");
-                string[] fileData = File.ReadAllLines("..\\..\\..\\гений идиот.txt");
-                for (int i = 0; i < fileData.Length; i++)
+                List<User> fileData = res.ReturnList();
+                foreach (User userRes in fileData)
                 {
-                    string line = fileData[i];
-                    string[] data = line.Split(' ');
-                    Console.WriteLine($"имя пользователя - {data[0]}, кол-во прав ответов - {data[1]}, диагноз - {data[2]}");
+                    Console.WriteLine($"Имя пользователя - {userRes.Name}, Кол-во прав ответов - {userRes.CorrectAnswers}, Диагноз - {userRes.Diagnos}");
                 }
             }
             else if (userAnswer == 3)
@@ -96,7 +47,7 @@ namespace Genius___Idiot
                 Console.WriteLine("Уточните вы хотите Добавить/Удалить");
                 string UserCreateQuestion = Console.ReadLine()!;
                 DeleteOrAddQuestions(UserCreateQuestion, questions);
-                SaveQuestions(questions);
+                questionsRepository.Save(questions);
             }
             user1.CorrectAnswers = 0;
             int questionsCount = questions.Count;
@@ -119,11 +70,13 @@ namespace Genius___Idiot
                 }
                 user1.Diagnos = MakeADiagnos(questionsCount, user1.CorrectAnswers);
                 user1.CorrectAnswers = 0;
-                GamingResults(user1.CorrectAnswers, user1.Diagnos, user1.Name);
+
+                res.Finish(user1);
+
                 Console.WriteLine($"Ваш диагноз - {user1.Diagnos}");
                 if (questionsCount == 0)
                 {
-                    questions = CreateQuestions();
+                    questions = questionsRepository.GetAll();
                 }
             }
 
@@ -143,26 +96,6 @@ namespace Genius___Idiot
             else if (correctPercent < 80)
                 return diagnosises[4];
             return diagnosises[5];
-        }
-        static List<Question> CreateQuestions()
-        {
-            List<Question> questions = new List<Question>();
-
-            Question question1 = new Question();
-            question1.Text = "1)Где храниться суета";
-            question1.Answer = "в барсетке";
-            questions.Add(question1);
-
-            Question question2 = new Question();
-            question2.Text = "2)Мужское есть";
-            question2.Answer = "жи есть";
-            questions.Add(question2);
-
-            Question question3 = new Question();
-            question3.Text = "3)Как зовут кошку";
-            question3.Answer = "бонтик";
-            questions.Add(question3);
-            return questions;
         }
         static bool PlayAgain(string userName)
         {
@@ -184,11 +117,7 @@ namespace Genius___Idiot
             }
             return false;
         }
-        static void GamingResults(int cnt, string diagnos, string userName)
-        {
-            string results = ($"{userName}#{cnt}#{diagnos}");
-            File.AppendAllText("..\\..\\..\\гений идиот.txt", results + Environment.NewLine);
-        }
+
         static void DeleteOrAddQuestions(string userDesision, List<Question> questions)
         {
 
@@ -211,18 +140,6 @@ namespace Genius___Idiot
                 questions.RemoveAt(questonIndex);
             }
         }
-        static void SaveQuestions(List<Question> questions)
-        {
-            List<string> questionsTexts = new List<string>();
-            List<string> questionsAnswers = new List<string>();
-            for (int i = 0; i < questions.Count; i++)
-            {
-                questionsTexts.Add(questions[i].Text);
-                questionsAnswers.Add(questions[i].Answer);
-            }
-
-            File.WriteAllLines("..\\..\\..\\Questions.txt", questionsTexts);
-            File.WriteAllLines("..\\..\\..\\Answers.txt", questionsAnswers);
-        }
     }
 }
+
