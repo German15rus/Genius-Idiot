@@ -29,55 +29,72 @@ namespace Genius___Idiot
             user1.Name = char.ToUpper(user1.Name[0]) + user1.Name.Substring(1);
             Console.WriteLine($"Приятно познакомиться, {user1.Name}.");
 
-            Console.WriteLine("Напишите номер того, что вас интересует.");
-            Console.WriteLine("1)Играть 2)Результаты 3)Удалить/Добавить");
-            int userAnswer = Convert.ToInt32(Console.ReadLine());
-
-            if (userAnswer == 2)
-            {
-                Console.WriteLine("Результаты прошлых игр");
-                List<User> fileData = res.ReturnList();
-                foreach (User userRes in fileData)
-                {
-                    Console.WriteLine($"Имя пользователя - {userRes.Name}, Кол-во прав ответов - {userRes.CorrectAnswers}, Диагноз - {userRes.Diagnos}");
-                }
-            }
-            else if (userAnswer == 3)
-            {
-                Console.WriteLine("Уточните вы хотите Добавить/Удалить");
-                string UserCreateQuestion = Console.ReadLine()!;
-                DeleteOrAddQuestions(UserCreateQuestion, questions);
-                questionsRepository.Save(questions);
-            }
-            user1.CorrectAnswers = 0;
-            int questionsCount = questions.Count;
-
             while (PlayAgain(user1.Name))
             {
-                for (int i = 0; i < questionsCount; i++)
-                {
-                    Random rnd = new Random();
-                    int randomIndex = rnd.Next(questions.Count);
-                    Console.WriteLine(questions[randomIndex].Text);
+                Console.WriteLine("Напишите номер того, что вас интересует.");
+                Console.WriteLine("1)Играть 2)Результаты 3)Удалить/Добавить 4) Выйти");
+                int userAnswer = Convert.ToInt32(Console.ReadLine());
 
-                    string QuestionAnswer = Console.ReadLine()!;
-                    QuestionAnswer = QuestionAnswer.ToLower();
-                    if (QuestionAnswer == questions[randomIndex].Answer)
+                if (userAnswer == 2)
+                {
+                    Console.WriteLine("Результаты прошлых игр");
+                    List<User> fileData = res.ReturnList();
+                    foreach (User userRes in fileData)
                     {
-                        user1.CorrectAnswers++;
+                        Console.WriteLine($"Имя пользователя - {userRes.Name}, Кол-во прав ответов - {userRes.CorrectAnswers}, Диагноз - {userRes.Diagnos}");
                     }
-                    questions.RemoveAt(randomIndex);
                 }
-                user1.Diagnos = MakeADiagnos(questionsCount, user1.CorrectAnswers);
-                user1.CorrectAnswers = 0;
 
-                res.Finish(user1);
-
-                Console.WriteLine($"Ваш диагноз - {user1.Diagnos}");
-                if (questionsCount == 0)
+                if (userAnswer == 3)
                 {
-                    questions = questionsRepository.GetAll();
+                    Console.WriteLine("Уточните вы хотите Добавить/Удалить");
+                    string UserCreateQuestion = Console.ReadLine()!;
+                    DeleteOrAddQuestions(UserCreateQuestion, questions);
+                    questionsRepository.Save(questions);
                 }
+
+                user1.CorrectAnswers = 0;
+                int questionsCount = questions.Count;
+
+                if (userAnswer == 1)
+                {
+                    while (questions.Count > 0)
+                    {
+                        for (int i = 0; i < questionsCount; i++)
+                        {
+                            Random rnd = new Random();
+                            int randomIndex = rnd.Next(questions.Count);
+                            Console.WriteLine(questions[randomIndex].Text);
+
+                            string QuestionAnswer = Console.ReadLine()!;
+                            QuestionAnswer = QuestionAnswer.ToLower();
+                            if (QuestionAnswer == questions[randomIndex].Answer)
+                            {
+                                user1.CorrectAnswers++;
+                            }
+                            questions.RemoveAt(randomIndex);
+                        }
+                        user1.Diagnos = MakeADiagnos(questionsCount, user1.CorrectAnswers);
+                        user1.CorrectAnswers = 0;
+
+                        res.Finish(user1);
+
+                        Console.WriteLine($"Ваш диагноз - {user1.Diagnos}");
+                    }
+                    if (questions.Count == 0)
+                    {
+                        questions = questionsRepository.GetAll();
+                    }
+                }
+                
+                if (userAnswer == 4)
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Данные некорректные. Введите номер интересующего вас варианта повторно");
+                }    
             }
 
         }

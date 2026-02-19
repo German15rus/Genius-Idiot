@@ -13,15 +13,14 @@
 			List<User> users = new List<User>();
 			User user = new User();
 			string[] s = File.ReadAllLines(resultPath);
-			for (int i = 0; i < s.Length; i++)
+			foreach (string line in s)
 			{
-				string line = s[i];
-				string[] data = line.Split(' ');
-				user.Name = data[0];
-				user.CorrectAnswers = int.Parse(data[1]);
-				user.Diagnos = data[2];
-				users.Add(user);
-			}
+                string[] data = line.Split('#');
+                user.Name = data[0];
+                user.CorrectAnswers = int.Parse(data[1]);
+                user.Diagnos = data[2];
+                users.Add(user);
+            }
 			return users;
 		}
 	}
