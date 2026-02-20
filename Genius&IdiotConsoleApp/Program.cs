@@ -1,22 +1,14 @@
-﻿using System.ComponentModel.Design;
-using System.IO.Pipes;
-using System.Linq.Expressions;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
-using System.Security.AccessControl;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Collections.Generic;
 
 namespace Genius___Idiot
 {
     internal class Program
     {
-
         static void Main(string[] args)
         {
             UsersStorage res = new UsersStorage();
-
             QuestionsStorage questionsRepository = new QuestionsStorage();
+
             List<Question> questions = questionsRepository.GetAll();
 
             questionsRepository.Save(questions);
@@ -31,70 +23,77 @@ namespace Genius___Idiot
 
             while (PlayAgain(user1.Name))
             {
+                string userAns = "";
                 Console.WriteLine("Напишите номер того, что вас интересует.");
                 Console.WriteLine("1)Играть 2)Результаты 3)Удалить/Добавить 4) Выйти");
-                int userAnswer = Convert.ToInt32(Console.ReadLine());
 
-                if (userAnswer == 2)
+                userAns = Console.ReadLine()!;
+                int userAnswer = CheckAnswer(userAns);
+
+                if ((userAnswer > 0) && (userAnswer <= 4))
                 {
-                    Console.WriteLine("Результаты прошлых игр");
-                    List<User> fileData = res.ReturnList();
-                    foreach (User userRes in fileData)
+                    if (userAnswer == 2)
                     {
-                        Console.WriteLine($"Имя пользователя - {userRes.Name}, Кол-во прав ответов - {userRes.CorrectAnswers}, Диагноз - {userRes.Diagnos}");
-                    }
-                }
-
-                if (userAnswer == 3)
-                {
-                    Console.WriteLine("Уточните вы хотите Добавить/Удалить");
-                    string UserCreateQuestion = Console.ReadLine()!;
-                    DeleteOrAddQuestions(UserCreateQuestion, questions);
-                    questionsRepository.Save(questions);
-                }
-
-                user1.CorrectAnswers = 0;
-                int questionsCount = questions.Count;
-
-                if (userAnswer == 1)
-                {
-                    while (questions.Count > 0)
-                    {
-                        for (int i = 0; i < questionsCount; i++)
+                        Console.WriteLine("Результаты прошлых игр");
+                        List<User> fileData = res.ReturnList();
+                        foreach (User userRes in fileData)
                         {
-                            Random rnd = new Random();
-                            int randomIndex = rnd.Next(questions.Count);
-                            Console.WriteLine(questions[randomIndex].Text);
-
-                            string QuestionAnswer = Console.ReadLine()!;
-                            QuestionAnswer = QuestionAnswer.ToLower();
-                            if (QuestionAnswer == questions[randomIndex].Answer)
-                            {
-                                user1.CorrectAnswers++;
-                            }
-                            questions.RemoveAt(randomIndex);
+                            Console.WriteLine($"Имя пользователя - {userRes.Name}, Кол-во прав ответов - {userRes.CorrectAnswers}, Диагноз - {userRes.Diagnos}");
                         }
-                        user1.Diagnos = MakeADiagnos(questionsCount, user1.CorrectAnswers);
-                        user1.CorrectAnswers = 0;
-
-                        res.Finish(user1);
-
-                        Console.WriteLine($"Ваш диагноз - {user1.Diagnos}");
                     }
-                    if (questions.Count == 0)
+
+                    if (userAnswer == 3)
                     {
-                        questions = questionsRepository.GetAll();
+                        Console.WriteLine("Уточните вы хотите Добавить/Удалить");
+                        string UserCreateQuestion = Console.ReadLine()!;
+                        DeleteOrAddQuestions(UserCreateQuestion, questions);
+                        questionsRepository.Save(questions);
+                    }
+
+                    user1.CorrectAnswers = 0;
+                    int questionsCount = questions.Count;
+
+                    if (userAnswer == 1)
+                    {
+                        while (questions.Count > 0)
+                        {
+                            for (int i = 0; i < questionsCount; i++)
+                            {
+                                Random rnd = new Random();
+                                int randomIndex = rnd.Next(questions.Count);
+                                Console.WriteLine(questions[randomIndex].Text);
+
+                                string QuestionAnswer = Console.ReadLine()!;
+                                QuestionAnswer = QuestionAnswer.ToLower();
+                                if (QuestionAnswer == questions[randomIndex].Answer)
+                                {
+                                    user1.CorrectAnswers++;
+                                }
+                                questions.RemoveAt(randomIndex);
+                            }
+                            user1.Diagnos = MakeADiagnos(questionsCount, user1.CorrectAnswers);
+                            res.Finish(user1);
+
+                            user1.CorrectAnswers = 0;
+
+                            Console.WriteLine($"Ваш диагноз - {user1.Diagnos}");
+                        }
+                        if (questions.Count == 0)
+                        {
+                            questions = questionsRepository.GetAll();
+                        }
+                    }
+
+                    if (userAnswer == 4)
+                    {
+                        break;
                     }
                 }
-                
-                if (userAnswer == 4)
-                {
-                    break;
-                }
+
                 else
                 {
                     Console.WriteLine("Данные некорректные. Введите номер интересующего вас варианта повторно");
-                }    
+                }
             }
 
         }
@@ -137,6 +136,8 @@ namespace Genius___Idiot
 
         static void DeleteOrAddQuestions(string userDesision, List<Question> questions)
         {
+            QuestionsStorage questionsStorage = new QuestionsStorage();
+            List < Question > newList = new List < Question >();
 
             if (userDesision.Equals("добавить", StringComparison.CurrentCultureIgnoreCase))
             {
@@ -148,14 +149,62 @@ namespace Genius___Idiot
                 newQuestion.Text = newQuestionText;
                 newQuestion.Answer = newQuestionAnswer;
 
-                questions.Add(newQuestion);
+                questionsStorage.Add(newQuestion);
+
+                newList = questionsStorage.GetAll();
+                questionsStorage.Save(newList);
+
             }
             else if (userDesision.Equals("удалить", StringComparison.CurrentCultureIgnoreCase))
             {
+                int number = 0;
+                foreach (Question question in questions)
+                {
+                    number++;
+                    Console.WriteLine(number + " " + question.Text);
+                }
+
                 Console.WriteLine("Напишите номер вопроса который хотите удалить");
-                int questonIndex = Convert.ToInt32(Console.ReadLine()) - 1;
-                questions.RemoveAt(questonIndex);
+
+                while (true)
+                {
+                    string delQuestion = Console.ReadLine()!;
+
+                    int questionIndex = CheckAnswer(delQuestion);
+
+                    if ((questionIndex <= questions.Count) && (questionIndex > 0))
+                    {
+                        questionsStorage.Remove(questionIndex);
+                        break;
+                    }
+
+                    else
+                    {
+                        Console.WriteLine("Введите номер который представлен в списке вопросов!");
+                    }
+                }
+
             }
+        }
+        static int CheckAnswer(string answer)
+        {
+            int n;
+
+            while (true)
+            {
+                
+                if (int.TryParse(answer, out n) == true)
+                {
+                    break;
+                }
+
+                else
+                {
+                    Console.WriteLine("Введите число!");
+                    answer = Console.ReadLine()!;
+                }
+            }
+            return n;
         }
     }
 }

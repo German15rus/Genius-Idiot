@@ -35,7 +35,7 @@
 			//удаляю ответ
 			withoutDel = File.ReadAllLines(answersPath).ToList();
 			withoutDel.RemoveAt(questionIndex);
-			File.WriteAllLines(textsPath, withoutDel);
+			File.WriteAllLines(answersPath, withoutDel);
 		}
 
 		public void Save(List<Question> questions)
