@@ -8,11 +8,6 @@ namespace Genius___Idiot
         {
             UsersStorage res = new UsersStorage();
             QuestionsStorage questionsRepository = new QuestionsStorage();
-
-            List<Question> questions = questionsRepository.GetAll();
-
-            questionsRepository.Save(questions);
-
             User user1 = new User();
 
             Console.WriteLine("Добро пожаловать на игру! Введите своё имя:");
@@ -23,6 +18,9 @@ namespace Genius___Idiot
 
             while (PlayAgain(user1.Name))
             {
+
+                List<Question> questions = questionsRepository.GetAll();
+
                 string userAns = "";
                 Console.WriteLine("Напишите номер того, что вас интересует.");
                 Console.WriteLine("1)Играть 2)Результаты 3)Удалить/Добавить 4) Выйти");
@@ -44,10 +42,21 @@ namespace Genius___Idiot
 
                     if (userAnswer == 3)
                     {
-                        Console.WriteLine("Уточните вы хотите Добавить/Удалить");
-                        string UserCreateQuestion = Console.ReadLine()!;
+                        string UserCreateQuestion = "";
+                        
+                        while (true)
+                        {
+                            
+                            Console.WriteLine("Уточните вы хотите Добавить/Удалить");
+
+                            UserCreateQuestion = Console.ReadLine()!;
+                            if ((UserCreateQuestion != "добавить") || (UserCreateQuestion != "удалить"))
+                            {
+                                break;
+                            }
+                        }
+                        
                         DeleteOrAddQuestions(UserCreateQuestion, questions);
-                        questionsRepository.Save(questions);
                     }
 
                     user1.CorrectAnswers = 0;
@@ -55,9 +64,39 @@ namespace Genius___Idiot
 
                     if (userAnswer == 1)
                     {
-                        while (questions.Count > 0)
+                        int hardLvl = 0;
+                        Console.WriteLine("Выберите уровень сложности:");
+                        Console.WriteLine("1) 5 вопросов" +
+                            "2) 10 вопросов" +
+                            "3) все вопросы");
+                        while (true)
                         {
-                            for (int i = 0; i < questionsCount; i++)
+                            string hardMode = Console.ReadLine()!;
+                            int userMode = CheckAnswer(hardMode);
+                            if (userMode == 1)
+                            {
+                                hardLvl = 5;
+                                break;
+                            }
+                            if (userMode == 2)
+                            {
+                                hardLvl = 10;
+                                break;
+                            }
+                            if (userMode == 3)
+                            {
+                                hardLvl = questions.Count;
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Введены не корректные данные. Повторите ввод.");
+                            }
+                        }
+                        int GameLvl = hardLvl;
+                        while (hardLvl > 0)
+                        {
+                            for (int i = 0; i < GameLvl; i++)
                             {
                                 Random rnd = new Random();
                                 int randomIndex = rnd.Next(questions.Count);
@@ -70,6 +109,7 @@ namespace Genius___Idiot
                                     user1.CorrectAnswers++;
                                 }
                                 questions.RemoveAt(randomIndex);
+                                hardLvl--;
                             }
                             user1.Diagnos = MakeADiagnos(questionsCount, user1.CorrectAnswers);
                             res.Finish(user1);
@@ -141,13 +181,12 @@ namespace Genius___Idiot
 
             if (userDesision.Equals("добавить", StringComparison.CurrentCultureIgnoreCase))
             {
+
                 Console.WriteLine("Введите вопрос, а после ответ на него:");
-                string newQuestionText = Console.ReadLine()!;
-                string newQuestionAnswer = Console.ReadLine()!;
 
                 Question newQuestion = new Question();
-                newQuestion.Text = newQuestionText;
-                newQuestion.Answer = newQuestionAnswer;
+                newQuestion.Text = Console.ReadLine()!;
+                newQuestion.Answer = Console.ReadLine()!;
 
                 questionsStorage.Add(newQuestion);
 
@@ -155,6 +194,7 @@ namespace Genius___Idiot
                 questionsStorage.Save(newList);
 
             }
+
             else if (userDesision.Equals("удалить", StringComparison.CurrentCultureIgnoreCase))
             {
                 int number = 0;
@@ -183,8 +223,8 @@ namespace Genius___Idiot
                         Console.WriteLine("Введите номер который представлен в списке вопросов!");
                     }
                 }
-
             }
+
         }
         static int CheckAnswer(string answer)
         {

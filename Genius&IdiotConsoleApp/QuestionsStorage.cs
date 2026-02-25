@@ -28,8 +28,9 @@
 
 		public void Remove(int questionIndex)
 		{
-			//удаляю вопрос
-			var withoutDel = File.ReadAllLines(textsPath).ToList();
+			questionIndex = questionIndex - 1;
+            //удаляю вопрос
+            var withoutDel = File.ReadAllLines(textsPath).ToList();
 			withoutDel.RemoveAt(questionIndex);
 			File.WriteAllLines(textsPath, withoutDel);
 			//удаляю ответ
