@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Intrinsics.X86;
 
 namespace Genius___Idiot
 {
@@ -12,7 +13,7 @@ namespace Genius___Idiot
 
 			Console.WriteLine("Добро пожаловать на игру! Введите своё имя:");
 
-			user1.UserName(user1); // TODO!!!
+			user1.UserName(user1);
 
 			Console.WriteLine($"Приятно познакомиться, {user1.Name}.");
 
@@ -75,6 +76,7 @@ namespace Genius___Idiot
 						}
 						questions.RemoveAt(randomIndex);
 					}
+					//var (sa , ca) = PlayingGame(user1, questionsRepository);
 
 					user1.Diagnos = MakeADiagnos(questionsCount, user1.CorrectAnswers);
 					res.Add(user1);
@@ -102,7 +104,58 @@ namespace Genius___Idiot
 				}
 			}
 		}
+		
+		public (int,int) PlayingGame(User user1, QuestionsStorage questionsRepository)
+		{
+            user1.CorrectAnswers = 0;
 
+            List<Question> questions = questionsRepository.GetAll();
+            int questionsCount = questions.Count;
+
+            Console.WriteLine("Выберите уровень сложности:");
+            Console.WriteLine("1)5 вопросов 2)10 вопросов 3)Все вопросы");
+            while (true)
+            {
+                int userMode = CheckAnswer();
+                if (userMode == 1)
+                {
+                    questionsCount = 5;
+                    break;
+                }
+                if (userMode == 2)
+                {
+                    questionsCount = 10;
+                    break;
+                }
+                if (userMode == 3)
+                {
+                    questionsCount = questions.Count;
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Введены не корректные данные. Повторите ввод.");
+                }
+            }
+
+            for (int i = 0; i < questionsCount; i++)
+            {
+                Random rnd = new Random();
+                int randomIndex = rnd.Next(questions.Count);
+                Console.WriteLine(questions[randomIndex].Text);
+
+                string questionAnswer = Console.ReadLine()!.ToLower();
+                if (questionAnswer == questions[randomIndex].Answer)
+                {
+                    user1.CorrectAnswers++;
+                }
+                questions.RemoveAt(randomIndex);
+            }
+			int correctAns = user1.CorrectAnswers;
+
+			return (correctAns, questionsCount);
+        }
+		
 		private static void ShowResutls(UsersStorage res)
 		{
 			Console.WriteLine("Результаты прошлых игр");
@@ -134,9 +187,10 @@ namespace Genius___Idiot
 				return diagnosises[4];
 			return diagnosises[5];
 		}
+
 		static bool PlayAgain(string userName)
 		{
-			Console.WriteLine($"{userName}, готов сыграть в игру? Введи ответ: Да или Нет.");
+			Console.WriteLine($"{userName}, заходите в меню? Введи ответ: Да или Нет.");
 
 			while (true)
 			{
@@ -169,7 +223,6 @@ namespace Genius___Idiot
 					break;
 				}
 			}
-
 			QuestionsStorage questionsStorage = new QuestionsStorage();
 
 			if (userDecision.Equals("добавить", StringComparison.CurrentCultureIgnoreCase))
@@ -182,6 +235,7 @@ namespace Genius___Idiot
 
 				questionsStorage.Add(newQuestion);
 			}
+
 			else if (userDecision.Equals("удалить", StringComparison.CurrentCultureIgnoreCase))
 			{
 				var questions = questionsStorage.GetAll();
