@@ -76,7 +76,7 @@ namespace Genius___Idiot
 						}
 						questions.RemoveAt(randomIndex);
 					}
-					//var (sa , ca) = PlayingGame(user1, questionsRepository);
+                    (int sa, int ca) = PlayingGame(user1, questionsRepository);
 
 					user1.Diagnos = MakeADiagnos(questionsCount, user1.CorrectAnswers);
 					res.Add(user1);
