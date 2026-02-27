@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.Intrinsics.X86;
 
 namespace Genius___Idiot
@@ -30,60 +31,16 @@ namespace Genius___Idiot
 					continue;
 				}
 
-				if (userAnswer == 1) //TODO function на срочняках
+				if (userAnswer == 1)
 				{
-					user1.CorrectAnswers = 0;
+					var (CorrAnsw , questionsCount) = PlayingGame(user1, questionsRepository);
+					
+					user1.Diagnos = MakeADiagnos(questionsCount, user1.CorrectAnswers = CorrAnsw);
 
-					List<Question> questions = questionsRepository.GetAll();
-					int questionsCount = questions.Count;
-
-					Console.WriteLine("Выберите уровень сложности:");
-					Console.WriteLine("1) 5 вопросов 2) 10 вопросов 3) все вопросы");
-					while (true)
-					{
-						int userMode = CheckAnswer();
-						if (userMode == 1)
-						{
-							questionsCount = 5;
-							break;
-						}
-						if (userMode == 2)
-						{
-							questionsCount = 10;
-							break;
-						}
-						if (userMode == 3)
-						{
-							questionsCount = questions.Count;
-							break;
-						}
-						else
-						{
-							Console.WriteLine("Введены не корректные данные. Повторите ввод.");
-						}
-					}
-
-					for (int i = 0; i < questionsCount; i++)
-					{
-						Random rnd = new Random();
-						int randomIndex = rnd.Next(questions.Count);
-						Console.WriteLine(questions[randomIndex].Text);
-
-						string questionAnswer = Console.ReadLine()!.ToLower();
-						if (questionAnswer == questions[randomIndex].Answer)
-						{
-							user1.CorrectAnswers++;
-						}
-						questions.RemoveAt(randomIndex);
-					}
-                    (int sa, int ca) = PlayingGame(user1, questionsRepository);
-
-					user1.Diagnos = MakeADiagnos(questionsCount, user1.CorrectAnswers);
 					res.Add(user1);
 
-					Console.WriteLine($"Ваш диагноз - {user1.Diagnos}");
-
-					continue;
+                    Console.WriteLine($"Ваш диагноз - {user1.Diagnos}");
+                    continue;
 				}
 
 				if (userAnswer == 2)
@@ -105,7 +62,7 @@ namespace Genius___Idiot
 			}
 		}
 		
-		public (int,int) PlayingGame(User user1, QuestionsStorage questionsRepository)
+		public static (int,int) PlayingGame(User user1, QuestionsStorage questionsRepository)
 		{
             user1.CorrectAnswers = 0;
 
@@ -186,11 +143,12 @@ namespace Genius___Idiot
 			else if (correctPercent < 80)
 				return diagnosises[4];
 			return diagnosises[5];
+
 		}
 
 		static bool PlayAgain(string userName)
 		{
-			Console.WriteLine($"{userName}, заходите в меню? Введи ответ: Да или Нет.");
+			Console.WriteLine($"{userName}, хотите перейти в меню? Введите ответ: Да или Нет.");
 
 			while (true)
 			{
@@ -212,16 +170,19 @@ namespace Genius___Idiot
 		static void DeleteOrAddQuestions()
 		{
 			string userDecision = "";
+            Console.WriteLine("Уточните вы хотите Добавить/Удалить");
 
-			while (true)
+            while (true)
 			{
-				Console.WriteLine("Уточните вы хотите Добавить/Удалить");
-
-				userDecision = Console.ReadLine()!.ToLower();
+				userDecision = Console.ReadLine()!.ToLower().Trim();
 				if ((userDecision != "добавить") || (userDecision != "удалить"))
 				{
+                    Console.WriteLine("Введите Добавить или  Удалить");
+                }
+				else
+				{
 					break;
-				}
+                }
 			}
 			QuestionsStorage questionsStorage = new QuestionsStorage();
 
