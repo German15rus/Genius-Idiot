@@ -14,7 +14,7 @@ namespace Genius___Idiot
 
 			Console.WriteLine("Добро пожаловать на игру! Введите своё имя:");
 
-			user1.UserName(user1);
+			user1 = UserName(user1);
 
 			Console.WriteLine($"Приятно познакомиться, {user1.Name}.");
 
@@ -34,8 +34,8 @@ namespace Genius___Idiot
 				if (userAnswer == 1)
 				{
 					var (CorrAnsw , questionsCount) = PlayingGame(user1, questionsRepository);
-					
-					user1.Diagnos = MakeADiagnos(questionsCount, user1.CorrectAnswers = CorrAnsw);
+					user1.CorrectAnswers = CorrAnsw;
+					user1.Diagnos = DiagnosCalculator.Make(questionsCount, user1.CorrectAnswers);
 
 					res.Add(user1);
 
@@ -112,8 +112,15 @@ namespace Genius___Idiot
 
 			return (correctAns, questionsCount);
         }
-		
-		private static void ShowResutls(UsersStorage res)
+
+        public static User UserName(User user)
+        {
+            user.Name = Console.ReadLine()!.Trim();
+            user.Name = char.ToUpper(user.Name[0]) + user.Name.Substring(1);
+            return user;
+        }
+
+        private static void ShowResutls(UsersStorage res)
 		{
 			Console.WriteLine("Результаты прошлых игр");
 			List<User> users = res.GetAll();
@@ -126,24 +133,6 @@ namespace Genius___Idiot
 			}
 
 			Console.WriteLine("--------------------------------------");
-		}
-
-		public static string MakeADiagnos(int questionsCount, int correctCount)
-		{
-			List<string> diagnosises = new List<string>() { "Идиот", "Бездарь", "Живчик", "Нормис", "Сигмантей", "Гений" };
-			double correctPercent = (double)correctCount / questionsCount * 100;
-			if (correctPercent == 0)
-				return diagnosises[0];
-			else if (correctPercent < 20)
-				return diagnosises[1];
-			else if (correctPercent < 40)
-				return diagnosises[2];
-			else if (correctPercent < 60)
-				return diagnosises[3];
-			else if (correctPercent < 80)
-				return diagnosises[4];
-			return diagnosises[5];
-
 		}
 
 		static bool PlayAgain(string userName)
@@ -175,7 +164,7 @@ namespace Genius___Idiot
             while (true)
 			{
 				userDecision = Console.ReadLine()!.ToLower().Trim();
-				if ((userDecision != "добавить") || (userDecision != "удалить"))
+				if ((userDecision != "добавить") && (userDecision != "удалить"))
 				{
                     Console.WriteLine("Введите Добавить или  Удалить");
                 }

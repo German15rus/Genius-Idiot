@@ -77,6 +77,7 @@
             Margin = new Padding(3, 4, 3, 4);
             Name = "AskName";
             Text = "AskName";
+            Load += AskName_Load;
             ResumeLayout(false);
             PerformLayout();
         }

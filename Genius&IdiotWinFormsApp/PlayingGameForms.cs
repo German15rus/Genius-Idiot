@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Genius___Idiot;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,147 +11,90 @@ using System.Windows.Forms;
 
 namespace Genius_IdiotWinFormsApp
 {
-	public partial class PlayingGameForms : Form
-	{
-		string[] lines = File.ReadAllLines("..\\..\\..\\Questions.txt");
-		string[] dines = File.ReadAllLines("..\\..\\..\\Answers.txt");
-		List<string> questionsBank = new List<string>() { };
-		List<string> answersBank = new List<string>() { };
-		Random rnd = new Random();
-		string questions = "";
-		string answers = "";
-		int numberQuestion = 1;
-		int CountRightAnswers = 0;
-		int cnt = 0;
-		string diagnos = "";
-		string userName = "";
+    public partial class PlayingGameForms : Form
+    {
+        User user;
+        UsersStorage userStorage;
+        QuestionsStorage questionsStorage;
+        List<Question> questions;
+        Question question;
 
+        Random rnd = new Random();
 
-		public PlayingGameForms()
-		{
-			InitializeComponent();
-			questionsBank.AddRange(lines);
-			answersBank.AddRange(dines);
-		}
+        int numberQuestion = 0;
 
-		private void PlayingGameForms_Load(object sender, EventArgs e)
-		{
+        public PlayingGameForms()
+        {
+            InitializeComponent();
 
-			int rndIndex = rnd.Next(questionsBank.Count);
-			questions = (questionsBank[rndIndex]);
-			answers = (answersBank[rndIndex]);
-			questionsBank.RemoveAt(rndIndex);
-			answersBank.RemoveAt(rndIndex);
+        }
 
+        private void PlayingGameForms_Load(object sender, EventArgs e)
+        {
+            numberQuestion++;
 
-			NumberQuestionLabel.Text = $"Вопрос №{numberQuestion}";
-			QuestionLabel.Text = questions;
+            questions = questionsStorage.GetAll();
 
-			if (UserAnswerTextBox.Text == answers)
-			{
-				CountRightAnswers++;
-			}
-			numberQuestion++;
-			cnt++;
-		}
+            int rndIndex = rnd.Next(questions.Count);
 
-		private void AnswerButton_Click(object sender, EventArgs e)
-		{
-			cnt++;
-			if (UserAnswerTextBox.Text == answers)
-			{
-				CountRightAnswers++;
-			}
-			UserAnswerTextBox.Text = "";
-			if (cnt > 5)
-			{
+            question = (questions[rndIndex]);
 
-				Hide();
-				AskName name = new AskName();
-				name.ShowDialog();
-				userName = name.userName;
-				if (userName != null)
-				{
-					diagnos = MakeADiagnos(CountRightAnswers, userName);
-					WritingResults(diagnos, userName);
-					Hide();
-					Form1 menu = new Form1();
-					menu.Show();
-				}
-			}
-			int rndIndex = rnd.Next(questionsBank.Count);
-			questions = (questionsBank[rndIndex]);
-			answers = (answersBank[rndIndex]);
-			questionsBank.RemoveAt(rndIndex);
-			answersBank.RemoveAt(rndIndex);
+            questions.RemoveAt(rndIndex);
 
-			NumberQuestionLabel.Text = $"Вопрос №{numberQuestion}";
-			QuestionLabel.Text = questions;
-			if (UserAnswerTextBox.Text == answers)
-			{
-				CountRightAnswers++;
-			}
-			numberQuestion++;
-		}
-		private string MakeADiagnos(int CountRightAnswers, string userName)
-		{
-			List<string> diagnosises = new List<string>() { "Идиот", "Бездарь", "Живчик", "Нормис", "Сигмантей", "Гений" };
-			double rightAns = CountRightAnswers;
-			double countQuestions = 5;
-			string diagnos = "";
-			double procent = rightAns / countQuestions * 100;
-			if (procent == 0)
-			{
-				MessageBox.Show($"{userName}, Ваш диагноз - {diagnosises[0]}");
-				return (diagnos = diagnosises[0]);
-			}
-			else if (procent < 20)
-			{
-				MessageBox.Show($"{userName}, Ваш диагноз - {diagnosises[1]}");
-				return (diagnos = diagnosises[1]);
-			}
-			else if (procent < 40)
-			{
-				MessageBox.Show($"{userName}, Ваш диагноз - {diagnosises[2]}");
-				return (diagnos = diagnosises[2]);
-			}
-			else if (procent < 60)
-			{
-				MessageBox.Show($"{userName}, Ваш диагноз - {diagnosises[3]}");
-				return (diagnos = diagnosises[3]);
-			}
-			else if (procent < 80)
-			{
-				MessageBox.Show($"{userName}, Ваш диагноз - {diagnosises[4]}");
-				return (diagnos = diagnosises[4]);
-			}
-			else if (procent <= 100)
-			{
-				MessageBox.Show($"{userName}, Ваш диагноз - {diagnosises[5]}");
-				return (diagnos = diagnosises[5]);
-			}
-			return (diagnos = diagnosises[0]);
-		}
-		private void WritingResults(string diagnos, string userName)
-		{
-			string results = ($"{userName}#{diagnos}");
+            NumberQuestionLabel.Text = $"Вопрос №{numberQuestion}";
+            QuestionLabel.Text = question.Text;
+        }
 
-			File.AppendAllText("..\\..\\..\\гений идиот.txt", results + Environment.NewLine);
-		}
+        private void AnswerButton_Click(object sender, EventArgs e)
+        {
 
-		private void UserAnswerTextBox_TextChanged(object sender, EventArgs e)
-		{
+            if (UserAnswerTextBox.Text == question.Answer)
+            {
+                user.CorrectAnswers++;
+            }
 
-		}
+            UserAnswerTextBox.Text = "";
 
-		private void QuestionLabel_Click(object sender, EventArgs e)
-		{
+            if (numberQuestion > 5)
+            {
+                Hide();
+                AskName name = new AskName();
+                name.ShowDialog();
+                user.Name = name.Name;
 
-		}
+                user.Diagnos = DiagnosCalculator.Make(questions.Count, user.CorrectAnswers);
+                userStorage.Add(user);
 
-		private void NumberQuestionLabel_Click(object sender, EventArgs e)
-		{
+                Hide();
+                Form1 menu = new Form1();
+                menu.Show();
 
-		}
-	}
+            }
+
+            int rndIndex = rnd.Next();
+
+            question = questions[rndIndex];
+            questions.RemoveAt(rndIndex);
+
+            numberQuestion++;
+
+            NumberQuestionLabel.Text = $"Вопрос №{numberQuestion}";
+            QuestionLabel.Text = question.Text;
+        }
+
+        private void UserAnswerTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void QuestionLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void NumberQuestionLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
 }

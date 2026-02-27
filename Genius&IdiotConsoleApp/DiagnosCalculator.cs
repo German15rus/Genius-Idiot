@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Genius___Idiot
 {
-    internal class DiagnosCalculator
+    public class DiagnosCalculator
     {
-        public static string MakeADiagnos(int questionsCount, int correctCount)
+        public static string Make(int questionsCount, int correctCount)
         {
             List<string> diagnosises = new List<string>() { "Идиот", "Бездарь", "Живчик", "Нормис", "Сигмантей", "Гений" };
             double correctPercent = (double)correctCount / questionsCount * 100;
