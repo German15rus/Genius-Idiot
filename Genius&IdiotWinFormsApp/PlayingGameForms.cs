@@ -13,16 +13,17 @@ namespace Genius_IdiotWinFormsApp
 {
     public partial class PlayingGameForms : Form
     {
-        User user;
-        UsersStorage userStorage;
-        QuestionsStorage questionsStorage;
-        List<Question> questions;
-        Question question;
+        User user = new User(); 
+        UsersStorage userStorage = new UsersStorage();
+        QuestionsStorage questionsStorage = new QuestionsStorage();
+        List<Question> questions = new List<Question>();
+        Question question = new Question();
 
         Random rnd = new Random();
 
         int numberQuestion = 0;
 
+        int rndIndex = 0;
         public PlayingGameForms()
         {
             InitializeComponent();
@@ -32,11 +33,9 @@ namespace Genius_IdiotWinFormsApp
         private void PlayingGameForms_Load(object sender, EventArgs e)
         {
             numberQuestion++;
-
             questions = questionsStorage.GetAll();
 
-            int rndIndex = rnd.Next(questions.Count);
-
+            rndIndex = rnd.Next(questions.Count);
             question = (questions[rndIndex]);
 
             questions.RemoveAt(rndIndex);
@@ -55,7 +54,7 @@ namespace Genius_IdiotWinFormsApp
 
             UserAnswerTextBox.Text = "";
 
-            if (numberQuestion > 5)
+            if (numberQuestion > 4)
             {
                 Hide();
                 AskName name = new AskName();
@@ -71,7 +70,7 @@ namespace Genius_IdiotWinFormsApp
 
             }
 
-            int rndIndex = rnd.Next();
+            rndIndex = rnd.Next(questions.Count);
 
             question = questions[rndIndex];
             questions.RemoveAt(rndIndex);

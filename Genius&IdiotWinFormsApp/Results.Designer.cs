@@ -55,13 +55,14 @@
             // 
             // resulterLabel
             // 
+            resulterLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             resulterLabel.AutoSize = true;
             resulterLabel.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            resulterLabel.Location = new Point(338, 41);
+            resulterLabel.Location = new Point(88, 94);
             resulterLabel.Name = "resulterLabel";
-            resulterLabel.Size = new Size(117, 46);
+            resulterLabel.Size = new Size(40, 46);
             resulterLabel.TabIndex = 3;
-            resulterLabel.Text = "label1";
+            resulterLabel.Text = "1";
             resulterLabel.Click += resulterLabel_Click;
             // 
             // Results

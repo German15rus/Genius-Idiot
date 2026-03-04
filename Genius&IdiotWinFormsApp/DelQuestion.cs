@@ -13,12 +13,18 @@ namespace Genius_IdiotWinFormsApp
 {
     public partial class DelQuestion : Form
     {
-        QuestionsStorage questionsStorage;
-        Question question;
-        UsersStorage usersStorage;
+        QuestionsStorage questionsStorage = new QuestionsStorage();
         public DelQuestion()
         {
             InitializeComponent();
+
+            var questions = questionsStorage.GetAll();
+            int numberQuestion = 0;
+            foreach (Question question in questions)
+            {
+                numberQuestion += 1;
+                label1.Text += $"{Environment.NewLine + numberQuestion}) {question.Text}";
+            }    
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -29,6 +35,8 @@ namespace Genius_IdiotWinFormsApp
         private void button2_Click(object sender, EventArgs e)
         {
             var questions = questionsStorage.GetAll();
+
+
             while (true)
             {
                 string n = numOfQuestionTextBox.Text;

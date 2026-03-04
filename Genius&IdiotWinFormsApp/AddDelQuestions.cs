@@ -37,5 +37,10 @@ namespace Genius_IdiotWinFormsApp
             DelQuestion delMenu = new DelQuestion();
             delMenu.Show();
         }
+
+        private void AddDelQuestions_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

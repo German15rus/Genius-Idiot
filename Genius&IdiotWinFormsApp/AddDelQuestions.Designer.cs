@@ -93,6 +93,7 @@
             Controls.Add(ChoiseLabel);
             Name = "AddDelQuestions";
             Text = "AddDelQuestions";
+            Load += AddDelQuestions_Load;
             ResumeLayout(false);
             PerformLayout();
         }

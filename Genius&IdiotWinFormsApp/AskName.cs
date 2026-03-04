@@ -13,7 +13,7 @@ namespace Genius_IdiotWinFormsApp
 {
     public partial class AskName : Form
     {
-        User user;
+        User user = new User();
 
         public AskName()
         {
@@ -28,16 +28,17 @@ namespace Genius_IdiotWinFormsApp
         private void NameButton_Click(object sender, EventArgs e)
         {
             user.Name = UserName.Text;
-            while (true)
+            if (user.Name != null)
             {
-                if ((int.TryParse(user.Name, out _)) && (user.Name != null))
-                {
-                    Hide();
-                    break;
-                }
+                MessageBox.Show("Принято");
+                Hide();
+            }
+            else
+            {
                 MessageBox.Show("Неверный ввод");
                 UserName.Text = "";
             }
+
         }
 
         private void AskName_Load(object sender, EventArgs e)

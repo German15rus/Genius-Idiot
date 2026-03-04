@@ -4,15 +4,15 @@ namespace Genius_IdiotWinFormsApp
 {
     public partial class Results : Form
     {
-        UsersStorage usersStorage;
-
+        UsersStorage usersStorage = new UsersStorage();
         public Results()
         {
             InitializeComponent();
             var users = usersStorage.GetAll();
+            resulterLabel.Text = "";
             foreach (User user in users)
             {
-                resulterLabel.Text = $"Имя - {user.Name}, Диагноз - {user.Diagnos}";
+                resulterLabel.Text += $"Имя - {user.Name}, Правильный ответ - {user.CorrectAnswers} Диагноз - {user.Diagnos}" + Environment.NewLine;
             }
         }
 

@@ -4,8 +4,8 @@ namespace Genius_IdiotWinFormsApp
 {
     public partial class AddQuestion : Form
     {
-        QuestionsStorage questionsStorage;
-        Question question;
+        QuestionsStorage questionsStorage = new QuestionsStorage();
+        Question question = new Question();
         List<string> userQuestion = new List<string>() { };
         int cnt = 0;
 
@@ -35,7 +35,6 @@ namespace Genius_IdiotWinFormsApp
                 question.Answer = (userQuestion[1]);
 
                 questionsStorage.Add(question);
-                questionsStorage.Save(questions);
 
                 MessageBox.Show("Вопрос добавлен");
 
