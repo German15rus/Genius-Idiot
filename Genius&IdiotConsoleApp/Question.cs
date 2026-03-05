@@ -6,6 +6,7 @@ namespace Genius___Idiot
     {
         public string Text;
         public string Answer;
+
         
     }
 }

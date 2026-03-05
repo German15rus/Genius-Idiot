@@ -12,7 +12,7 @@ namespace Genius_IdiotWinFormsApp
             resulterLabel.Text = "";
             foreach (User user in users)
             {
-                resulterLabel.Text += $"Имя - {user.Name}, Правильный ответ - {user.CorrectAnswers} Диагноз - {user.Diagnos}" + Environment.NewLine;
+                resulterLabel.Text += $"Имя - {user.Name}, Правильный ответ - {user.CorrectAnswers}, Диагноз - {user.Diagnosis}" + Environment.NewLine;
             }
         }
 

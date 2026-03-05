@@ -8,15 +8,17 @@ namespace Genius___Idiot
 	{
 		static void Main(string[] args)
 		{
-			UsersStorage res = new UsersStorage();
+            User user1 = new User();
+            UsersStorage res = new UsersStorage();
 			QuestionsStorage questionsRepository = new QuestionsStorage();
-			User user1 = new User();
+			
 
 			Console.WriteLine("Добро пожаловать на игру! Введите своё имя:");
+            
+            user1.Name = UserName();
+            
 
-			user1 = UserName(user1);
-
-			Console.WriteLine($"Приятно познакомиться, {user1.Name}.");
+            Console.WriteLine($"Приятно познакомиться, {user1.Name}.");
 
 			while (PlayAgain(user1.Name))
 			{
@@ -35,11 +37,11 @@ namespace Genius___Idiot
 				{
 					var (CorrAnsw , questionsCount) = PlayingGame(user1, questionsRepository);
 					user1.CorrectAnswers = CorrAnsw;
-					user1.Diagnos = DiagnosCalculator.Make(questionsCount, user1.CorrectAnswers);
+					user1.Diagnosis = DiagnosCalculator.Make(questionsCount, user1.CorrectAnswers);
 
 					res.Add(user1);
 
-                    Console.WriteLine($"Ваш диагноз - {user1.Diagnos}");
+                    Console.WriteLine($"Ваш диагноз - {user1.Diagnosis}");
                     continue;
 				}
 
@@ -113,10 +115,10 @@ namespace Genius___Idiot
 			return (correctAns, questionsCount);
         }
 
-        public static User UserName(User user)
+        public static string UserName()
         {
-            user.Name = Console.ReadLine()!.Trim();
-            user.Name = char.ToUpper(user.Name[0]) + user.Name.Substring(1);
+            string user = Console.ReadLine()!.Trim();
+            user = char.ToUpper(user[0]) + user.Substring(1);
             return user;
         }
 
@@ -129,7 +131,7 @@ namespace Genius___Idiot
 
 			foreach (User user in users)
 			{
-				Console.WriteLine($"Имя пользователя - {user.Name}, Кол-во прав ответов - {user.CorrectAnswers}, Диагноз - {user.Diagnos}");
+				Console.WriteLine($"Имя пользователя - {user.Name}, Кол-во прав ответов - {user.CorrectAnswers}, Диагноз - {user.Diagnosis}");
 			}
 
 			Console.WriteLine("--------------------------------------");
@@ -177,14 +179,15 @@ namespace Genius___Idiot
 
 			if (userDecision.Equals("добавить", StringComparison.CurrentCultureIgnoreCase))
 			{
-				Console.WriteLine("Введите вопрос, а после ответ на него:");
+                Question newQuestion = new Question();
+                Console.WriteLine("Введите вопрос который хотите добавить:");
+                newQuestion.Text = Console.ReadLine()!;
 
-				Question newQuestion = new Question();
-				newQuestion.Text = Console.ReadLine()!;
-				newQuestion.Answer = Console.ReadLine()!;
+                Console.WriteLine("Введите ответ к нему:");
+                newQuestion.Answer = Console.ReadLine()!;
 
-				questionsStorage.Add(newQuestion);
-			}
+                questionsStorage.Add(newQuestion);
+            }
 
 			else if (userDecision.Equals("удалить", StringComparison.CurrentCultureIgnoreCase))
 			{

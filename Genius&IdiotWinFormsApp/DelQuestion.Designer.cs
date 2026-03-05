@@ -38,9 +38,9 @@
             // 
             button1.BackColor = Color.OrangeRed;
             button1.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button1.Location = new Point(653, 39);
+            button1.Location = new Point(948, 33);
             button1.Name = "button1";
-            button1.Size = new Size(120, 87);
+            button1.Size = new Size(193, 115);
             button1.TabIndex = 0;
             button1.Text = "Выход";
             button1.UseVisualStyleBackColor = false;
@@ -49,29 +49,29 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            label1.Location = new Point(107, 169);
+            label1.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            label1.Location = new Point(21, 33);
             label1.Name = "label1";
-            label1.Size = new Size(650, 41);
+            label1.Size = new Size(609, 38);
             label1.TabIndex = 1;
             label1.Text = "Напишите вопрос который хотите удалить";
             label1.Click += label1_Click;
             // 
             // numOfQuestionTextBox
             // 
-            numOfQuestionTextBox.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            numOfQuestionTextBox.Location = new Point(162, 260);
+            numOfQuestionTextBox.Font = new Font("Segoe UI", 22.2F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            numOfQuestionTextBox.Location = new Point(200, 397);
             numOfQuestionTextBox.Name = "numOfQuestionTextBox";
-            numOfQuestionTextBox.Size = new Size(470, 47);
+            numOfQuestionTextBox.Size = new Size(853, 57);
             numOfQuestionTextBox.TabIndex = 2;
             // 
             // button2
             // 
             button2.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button2.Location = new Point(326, 332);
+            button2.Location = new Point(477, 494);
             button2.Margin = new Padding(3, 4, 3, 4);
             button2.Name = "button2";
-            button2.Size = new Size(176, 72);
+            button2.Size = new Size(303, 95);
             button2.TabIndex = 3;
             button2.Text = "Отправить";
             button2.UseVisualStyleBackColor = true;
@@ -82,7 +82,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(255, 128, 0);
-            ClientSize = new Size(800, 451);
+            ClientSize = new Size(1175, 665);
             Controls.Add(button2);
             Controls.Add(numOfQuestionTextBox);
             Controls.Add(label1);
@@ -100,5 +100,5 @@
         private Label label1;
         private TextBox numOfQuestionTextBox;
 		private Button button2;
-	}
+    }
 }

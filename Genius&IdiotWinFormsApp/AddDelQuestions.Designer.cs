@@ -38,7 +38,7 @@
             // 
             ChoiseLabel.AutoSize = true;
             ChoiseLabel.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            ChoiseLabel.Location = new Point(58, 183);
+            ChoiseLabel.Location = new Point(246, 210);
             ChoiseLabel.Name = "ChoiseLabel";
             ChoiseLabel.Size = new Size(710, 46);
             ChoiseLabel.TabIndex = 0;
@@ -48,9 +48,9 @@
             // 
             AddButton.Cursor = Cursors.Hand;
             AddButton.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            AddButton.Location = new Point(73, 280);
+            AddButton.Location = new Point(124, 427);
             AddButton.Name = "AddButton";
-            AddButton.Size = new Size(188, 90);
+            AddButton.Size = new Size(272, 117);
             AddButton.TabIndex = 1;
             AddButton.Text = "Добавить";
             AddButton.UseVisualStyleBackColor = true;
@@ -60,9 +60,9 @@
             // 
             delButton.Cursor = Cursors.Hand;
             delButton.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            delButton.Location = new Point(558, 280);
+            delButton.Location = new Point(782, 427);
             delButton.Name = "delButton";
-            delButton.Size = new Size(193, 90);
+            delButton.Size = new Size(277, 117);
             delButton.TabIndex = 2;
             delButton.Text = "Удалить";
             delButton.UseVisualStyleBackColor = true;
@@ -73,9 +73,9 @@
             QuitButton.BackColor = Color.OrangeRed;
             QuitButton.Cursor = Cursors.Hand;
             QuitButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            QuitButton.Location = new Point(639, 24);
+            QuitButton.Location = new Point(976, 31);
             QuitButton.Name = "QuitButton";
-            QuitButton.Size = new Size(149, 68);
+            QuitButton.Size = new Size(149, 115);
             QuitButton.TabIndex = 3;
             QuitButton.Text = "Выйти";
             QuitButton.UseVisualStyleBackColor = false;
@@ -86,7 +86,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(255, 128, 0);
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1175, 665);
             Controls.Add(QuitButton);
             Controls.Add(delButton);
             Controls.Add(AddButton);

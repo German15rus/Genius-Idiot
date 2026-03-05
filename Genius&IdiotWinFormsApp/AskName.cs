@@ -13,8 +13,7 @@ namespace Genius_IdiotWinFormsApp
 {
     public partial class AskName : Form
     {
-        User user = new User();
-
+        public User user = new User();
         public AskName()
         {
             InitializeComponent();
@@ -27,9 +26,11 @@ namespace Genius_IdiotWinFormsApp
 
         private void NameButton_Click(object sender, EventArgs e)
         {
-            user.Name = UserName.Text;
-            if (user.Name != null)
+            string name = UserName.Text;
+
+            if (name != null)
             {
+                user.Name = name;
                 MessageBox.Show("Принято");
                 Hide();
             }

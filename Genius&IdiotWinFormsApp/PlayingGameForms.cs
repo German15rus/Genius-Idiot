@@ -13,7 +13,7 @@ namespace Genius_IdiotWinFormsApp
 {
     public partial class PlayingGameForms : Form
     {
-        User user = new User(); 
+        User user = new User();
         UsersStorage userStorage = new UsersStorage();
         QuestionsStorage questionsStorage = new QuestionsStorage();
         List<Question> questions = new List<Question>();
@@ -46,7 +46,6 @@ namespace Genius_IdiotWinFormsApp
 
         private void AnswerButton_Click(object sender, EventArgs e)
         {
-
             if (UserAnswerTextBox.Text == question.Answer)
             {
                 user.CorrectAnswers++;
@@ -54,24 +53,15 @@ namespace Genius_IdiotWinFormsApp
 
             UserAnswerTextBox.Text = "";
 
-            if (numberQuestion > 4)
-            {
-                Hide();
-                AskName name = new AskName();
-                name.ShowDialog();
-                user.Name = name.Name;
-
-                user.Diagnos = DiagnosCalculator.Make(questions.Count, user.CorrectAnswers);
-                userStorage.Add(user);
-
-                Hide();
-                Form1 menu = new Form1();
-                menu.Show();
-
-            }
+            
 
             rndIndex = rnd.Next(questions.Count);
 
+            if (questions.Count == 0)
+            {
+                questions = questionsStorage.GetAll();
+            }    
+            
             question = questions[rndIndex];
             questions.RemoveAt(rndIndex);
 
@@ -79,6 +69,23 @@ namespace Genius_IdiotWinFormsApp
 
             NumberQuestionLabel.Text = $"Вопрос №{numberQuestion}";
             QuestionLabel.Text = question.Text;
+
+
+            if (numberQuestion > 5)
+            {
+                Hide();
+                AskName name = new AskName();
+                name.ShowDialog();
+                user.Name = name.user.Name;
+
+                user.Diagnosis = DiagnosCalculator.Make(questions.Count, user.CorrectAnswers);
+                userStorage.Add(user);
+
+                Hide();
+                Form1 menu = new Form1();
+                menu.Show();
+
+            }
         }
 
         private void UserAnswerTextBox_TextChanged(object sender, EventArgs e)

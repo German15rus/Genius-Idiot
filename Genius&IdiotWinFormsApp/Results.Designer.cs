@@ -37,7 +37,7 @@
             // 
             QuitButton.BackColor = Color.OrangeRed;
             QuitButton.Font = new Font("Segoe UI Black", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            QuitButton.Location = new Point(757, 28);
+            QuitButton.Location = new Point(1016, 28);
             QuitButton.Margin = new Padding(3, 4, 3, 4);
             QuitButton.Name = "QuitButton";
             QuitButton.Size = new Size(130, 112);
@@ -57,10 +57,10 @@
             // 
             resulterLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             resulterLabel.AutoSize = true;
-            resulterLabel.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            resulterLabel.Location = new Point(88, 94);
+            resulterLabel.Font = new Font("Segoe UI Semibold", 19.8000011F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
+            resulterLabel.Location = new Point(61, 83);
             resulterLabel.Name = "resulterLabel";
-            resulterLabel.Size = new Size(40, 46);
+            resulterLabel.Size = new Size(34, 46);
             resulterLabel.TabIndex = 3;
             resulterLabel.Text = "1";
             resulterLabel.Click += resulterLabel_Click;
@@ -70,7 +70,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(255, 128, 0);
-            ClientSize = new Size(914, 600);
+            ClientSize = new Size(1175, 665);
             Controls.Add(resulterLabel);
             Controls.Add(resultsLabel);
             Controls.Add(QuitButton);

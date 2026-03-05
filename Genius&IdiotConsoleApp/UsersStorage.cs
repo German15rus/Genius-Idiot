@@ -1,32 +1,39 @@
-﻿namespace Genius___Idiot
+﻿using Newtonsoft.Json;
+namespace Genius___Idiot
+
 {
     public class UsersStorage
     {
-        private string resultPath = "..\\..\\..\\гений идиот.txt";
-        
+        private string path = "records.json";
+        List<User> users = new List<User>();
+
         public void Add(User user)
         {
-            string result = ($"{user.Name}#{user.CorrectAnswers}#{user.Diagnos}");
-            File.AppendAllText(resultPath, result + Environment.NewLine);
+            List<User> users = GetAll();
+
+            users.Add(user);
+
+            string jsonString = JsonConvert.SerializeObject(users, Formatting.Indented);
+            File.WriteAllText(path, jsonString);
         }
 
         public List<User> GetAll()
         {
-            List<User> users = new List<User>();
-
-            foreach (string line in File.ReadAllLines(resultPath))
+            if (!File.Exists(path))
             {
-                string[] data = line.Split('#');
-
-                User user = new User();
-                user.Name = data[0];
-                user.CorrectAnswers = int.Parse(data[1]);
-                user.Diagnos = data[2];
-                
-                users.Add(user);
+                return new List<User>();
             }
 
-            return users;
+            string jsonString = File.ReadAllText(path);
+            if (jsonString == null)
+            {
+                return new List<User>();
+            }
+            else
+            {
+                users = JsonConvert.DeserializeObject<List<User>>(jsonString);
+                return users;
+            }
         }
     }
 }

@@ -48,5 +48,10 @@ namespace Genius_IdiotWinFormsApp
         {
 
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

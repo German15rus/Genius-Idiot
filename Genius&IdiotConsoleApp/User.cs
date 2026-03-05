@@ -5,8 +5,9 @@ namespace Genius___Idiot
 	public class User
 	{
 		public string Name;
-		public string Diagnos;
+		public string Diagnosis;
 		public int CorrectAnswers;
 
+		public User() { }
     }
 }
