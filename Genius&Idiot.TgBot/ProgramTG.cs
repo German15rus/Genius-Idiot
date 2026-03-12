@@ -60,6 +60,19 @@ namespace Genius_Idiot.TgBot
                 return;
             }
 
+            if (update.Message.Text == "Удалить вопрос")
+            {
+				var delQuestion = "<pre>";
+				delQuestion += $"{"Текст вопроса - ",-30}\n";
+
+				List<Question> delQuestions = questionsStorage.GetAll();
+
+                foreach (var quest in delQuestions)
+                {
+                    delQuestion = 
+                }
+            }
+
             if (update.Message.Text == "/start")
             {
                 await bot.SendMessage(update.Message.Chat.Id, "Выберите :",
