@@ -1,78 +1,138 @@
-﻿using Genius___Idiot;
+﻿using System.Runtime.Intrinsics.X86;
+using Genius___Idiot;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Genius_Idiot.TgBot
 {
-	internal class ProgramTG
-	{
-		static UsersStorage usersStorage = new UsersStorage();
-		static QuestionsStorage questionsStorage = new QuestionsStorage();
-		static TelegramBotClient bot = new TelegramBotClient("8519487868:AAG89J-nRMF1hOeeiYCL2bb7nHi7O5JEqmY");
-		static int randomIndex;
-		static bool GameOn = false;
-		static async Task Main(string[] args)
-		{
+    internal class ProgramTG
+    {
+        static UsersStorage usersStorage = new UsersStorage();
+        static QuestionsStorage questionsStorage = new QuestionsStorage();
+        static TelegramBotClient bot = new TelegramBotClient("8519487868:AAG89J-nRMF1hOeeiYCL2bb7nHi7O5JEqmY");
+        static int randomIndex;
+        static bool AddQuestion = false;
+        static bool AddAnswer = false;
+        static bool GameOn = false;
+        static List<Question> questions;
+        static int questionsCount;
+        static int correctAnswers;
+        static Question newQuestion = new Question();
 
-			var me = await bot.GetMe();
-			Console.WriteLine($"Bot Name - {me.FirstName}.");
+        static Random rnd = new Random();
+        static async Task Main(string[] args)
+        {
 
-			bot.OnUpdate += Bot_OnUpdate;
+            var me = await bot.GetMe();
+            Console.WriteLine($"Bot Name - {me.FirstName}.");
 
-			Console.ReadKey();
-		}
+            bot.OnUpdate += Bot_OnUpdate;
 
-		private static async Task Bot_OnUpdate(Telegram.Bot.Types.Update update)
-		{
-			List<Question> questions = questionsStorage.GetAll();
-			Random rnd = new Random();
+            Console.ReadKey();
+        }
+
+        private static async Task Bot_OnUpdate(Telegram.Bot.Types.Update update)
+        {
+            if (update.Message.Text == "Результаты")
+            {
+                var ress = "<pre>";
+                ress += $"{"Имя",-30}{"Кол-во правильных ответов",-30}{"Диагноз",-30}\n";
+
+                foreach (var user in usersStorage.GetAll())
+                {
+                    ress += $"{user.Name,-30}{user.CorrectAnswers,-30}{user.Diagnosis,-30}\n";
+                }
+
+                ress += "</pre>";
+
+                await bot.SendMessage(update.Message.Chat.Id, ress, Telegram.Bot.Types.Enums.ParseMode.Html);
+
+                return;
+            }
+
+            if (update.Message.Text == "Добавить вопрос")
+            {
+                await bot.SendMessage(update.Message.Chat.Id, "Напишите текст вопроса");
+
+                AddQuestion = true;
+
+                return;
+            }
+
+            if (update.Message.Text == "/start")
+            {
+                await bot.SendMessage(update.Message.Chat.Id, "Выберите :",
+                    replyMarkup: new KeyboardButton[][] { ["Начать игру", "Результаты"], ["Добавить вопрос", "Удалить вопрос"] });
+
+                return;
+            }
+
+            if (update.Message.Text == "Начать игру")
+            {
+                GameOn = true;
+                
+                questions = questionsStorage.GetAll();
+                questionsCount = questions.Count;
+
+                randomIndex = rnd.Next(questions.Count);
+                await bot.SendMessage(update.Message.Chat.Id, $"{questions[randomIndex].Text}");
+
+                return;
+            }
 
 
+            if (GameOn)
+            {
+                if (update.Message.Text == $"{questions[randomIndex].Answer}")
+                {
+                    correctAnswers++;
+                    await bot.SendMessage(update.Message.Chat.Id, "Правильно");
+                }
+                else
+                {
+                    await bot.SendMessage(update.Message.Chat.Id, $"Неправильно. Правильный ответ - {questions[randomIndex].Answer}");
+                }
 
-			if (update.Message.Text == "/start")
-			{
-				await bot.SendMessage(update.Message.Chat.Id, "Выберите :",
-					replyMarkup: new KeyboardButton[][] { ["Начать игру", "Результаты"], ["Добавить вопрос"] });
+                questions.RemoveAt(randomIndex);
 
-			}
+                if (questions.Count == 0)
+                {
+                    Genius___Idiot.User user = new Genius___Idiot.User();
+                    user.Name = update.Message.From.Username;
+                    user.CorrectAnswers = correctAnswers;
+                    user.Diagnosis = DiagnosCalculator.Make(questionsCount, correctAnswers);
+                    usersStorage.Add(user);
 
-			if (update.Message.Text == "Начать игру")
-			{
-				GameOn = true;
-				
-				if (GameOn = true)
-				{
-					if (GameOn == true)
-						randomIndex = rnd.Next(questions.Count);
-					await bot.SendMessage(update.Message.Chat.Id, $"{questions[randomIndex].Text}");
+                    Console.WriteLine($"Ваш диагноз - {user.Diagnosis}");
 
+                    return;
+                }
 
+                randomIndex = rnd.Next(questions.Count);
+                await bot.SendMessage(update.Message.Chat.Id, $"{questions[randomIndex].Text}");
+            }
 
-					if (update.Message.Text == $"{questions[randomIndex].Answer}")
-					{
-						await bot.SendMessage(update.Message.Chat.Id, "Правильно");
-					}
+            if (AddQuestion)
+            { 
+                newQuestion.Text = update.Message.Text;
 
-					else
-					{
-						bot.SendMessage(update.Message.Chat.Id, $"правильный ответ - {questions[randomIndex].Answer}");
-						await bot.SendMessage(update.Message.Chat.Id, "Неправильно");
-					}
-				}
-			}
+                AddQuestion = false;
+                AddAnswer = true;
+                await bot.SendMessage(update.Message.Chat.Id, "Вопрос принят. Напишите ответ");
 
-			if (update.Message.Text == "Результаты")
-			{
-				var ress = "<pre>";
-				ress += $"{"Имя",-30}{"Процент %",-30}{"Диагноз",-30}\n";
+                return;
+            }
 
-				foreach (var user in questionsStorage.GetAll())
-				{
+            if (AddAnswer)
+            {
+                newQuestion.Answer = update.Message.Text;
 
-				}
+                AddAnswer = false;
 
-			}
-		}
-	}
+                questionsStorage.Add(newQuestion);
+                await bot.SendMessage(update.Message.Chat.Id, "Вопрос добавлен");
+            }
+        }
+    }
 }
