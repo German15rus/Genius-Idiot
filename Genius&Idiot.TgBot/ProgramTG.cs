@@ -1,4 +1,5 @@
-﻿using System.Runtime.Intrinsics.X86;
+﻿using System.Linq.Expressions;
+using System.Runtime.Intrinsics.X86;
 using Genius___Idiot;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -12,10 +13,8 @@ namespace Genius_Idiot.TgBot
         static QuestionsStorage questionsStorage = new QuestionsStorage();
         static TelegramBotClient bot = new TelegramBotClient("8519487868:AAG89J-nRMF1hOeeiYCL2bb7nHi7O5JEqmY");
         static int randomIndex;
-        static bool AddQuestion = false;
-        static bool AddAnswer = false;
-        static bool GameOn = false;
-        static List<Question> questions;
+        static int cnt = 0;
+        static List<Question> questions = new List<Question>();
         static int questionsCount;
         static int correctAnswers;
         static Question newQuestion = new Question();
@@ -31,10 +30,31 @@ namespace Genius_Idiot.TgBot
 
             Console.ReadKey();
         }
-
+        private static Dictionary<long, Genius___Idiot.User> usersDict = new Dictionary<long, Genius___Idiot.User>();
+        private static Dictionary<long, string> userStates = new Dictionary<long, string>();
         private static async Task Bot_OnUpdate(Telegram.Bot.Types.Update update)
         {
-            if (update.Message.Text == "Результаты")
+
+            long chatId = update.Message.Chat.Id;
+            string text = update.Message.Text;
+
+            if (usersDict.ContainsKey(chatId))
+            {
+                Genius___Idiot.User existingUser = usersDict[chatId];
+            }
+            else
+            {
+                if (userStates.TryGetValue(chatId, out string state) && state == "waiting_for_name") // если он находиться в каком то состояни, и это состояние ожидание имени
+                {
+                    Genius___Idiot.User newUser = new Genius___Idiot.User { Name = text };
+                    newUser.Name = update.Message.From.Username;
+
+                    usersDict[chatId] = newUser;
+                    userStates[chatId] = "in_menu";
+                }
+            }
+
+            if ((text == "Результаты") && (userStates[chatId] == "in_menu"))
             {
                 var ress = "<pre>";
                 ress += $"{"Имя",-30}{"Кол-во правильных ответов",-30}{"Диагноз",-30}\n";
@@ -46,65 +66,71 @@ namespace Genius_Idiot.TgBot
 
                 ress += "</pre>";
 
-                await bot.SendMessage(update.Message.Chat.Id, ress, Telegram.Bot.Types.Enums.ParseMode.Html);
+                await bot.SendMessage(chatId, ress, Telegram.Bot.Types.Enums.ParseMode.Html);
 
                 return;
             }
 
-            if (update.Message.Text == "Добавить вопрос")
+            if ((text == "Добавить вопрос") && (userStates[chatId] == "in_menu"))
             {
-                await bot.SendMessage(update.Message.Chat.Id, "Напишите текст вопроса");
+                await bot.SendMessage(chatId, "Напишите текст вопроса");
 
-                AddQuestion = true;
+
+                userStates[chatId] = "add_question";
 
                 return;
             }
 
-            if (update.Message.Text == "Удалить вопрос")
+            if (text == "Удалить вопрос")
             {
-				var delQuestion = "<pre>";
-				delQuestion += $"{"Текст вопроса - ",-30}\n";
+                
+                var delQuestion = "<pre>";
+                delQuestion += $"{cnt}){"Текст вопроса - ",-30}\n";
 
-				List<Question> delQuestions = questionsStorage.GetAll();
+                List<Question> delQuestions = questionsStorage.GetAll();
 
                 foreach (var quest in delQuestions)
                 {
-                    delQuestion = 
+                    delQuestion += $"{quest,-30}";
+                    cnt++;
                 }
+                userStates[chatId] = "del_question";
             }
 
-            if (update.Message.Text == "/start")
+            if ((text == "/start") && (userStates[chatId] == "in_menu"))
             {
-                await bot.SendMessage(update.Message.Chat.Id, "Выберите :",
-                    replyMarkup: new KeyboardButton[][] { ["Начать игру", "Результаты"], ["Добавить вопрос", "Удалить вопрос"] });
+                await bot.SendMessage(chatId, "Выберите :",
+                        replyMarkup: new KeyboardButton[][] { ["Начать игру", "Результаты"], ["Добавить вопрос", "Удалить вопрос"] });
 
                 return;
             }
 
-            if (update.Message.Text == "Начать игру")
+            if (text == "Начать игру")
             {
-                GameOn = true;
-                
+                Genius___Idiot.User currentUser = usersDict[chatId];
+                userStates[chatId] = "playing_game";
+
+
                 questions = questionsStorage.GetAll();
                 questionsCount = questions.Count;
 
                 randomIndex = rnd.Next(questions.Count);
-                await bot.SendMessage(update.Message.Chat.Id, $"{questions[randomIndex].Text}");
+                await bot.SendMessage(chatId, $"{questions[randomIndex].Text}");
 
                 return;
             }
 
 
-            if (GameOn)
+            if (userStates[chatId] == "playing_game") 
             {
-                if (update.Message.Text == $"{questions[randomIndex].Answer}")
+                if (text == $"{questions[randomIndex].Answer}")
                 {
                     correctAnswers++;
-                    await bot.SendMessage(update.Message.Chat.Id, "Правильно");
+                    await bot.SendMessage(chatId, "Правильно");
                 }
                 else
                 {
-                    await bot.SendMessage(update.Message.Chat.Id, $"Неправильно. Правильный ответ - {questions[randomIndex].Answer}");
+                    await bot.SendMessage(chatId, $"Неправильно. Правильный ответ - {questions[randomIndex].Answer}");
                 }
 
                 questions.RemoveAt(randomIndex);
@@ -117,34 +143,43 @@ namespace Genius_Idiot.TgBot
                     user.Diagnosis = DiagnosCalculator.Make(questionsCount, correctAnswers);
                     usersStorage.Add(user);
 
-                    Console.WriteLine($"Ваш диагноз - {user.Diagnosis}");
+                    await bot.SendMessage(chatId, $"Ваш диагноз - {user.Diagnosis}");
+
+                    userStates[chatId] = "in_menu";
 
                     return;
                 }
 
                 randomIndex = rnd.Next(questions.Count);
-                await bot.SendMessage(update.Message.Chat.Id, $"{questions[randomIndex].Text}");
+                await bot.SendMessage(chatId, $"{questions[randomIndex].Text}");
             }
 
-            if (AddQuestion)
-            { 
-                newQuestion.Text = update.Message.Text;
+            if (userStates[chatId] == "add_question")
+            {
+                newQuestion.Text = text;
 
-                AddQuestion = false;
-                AddAnswer = true;
-                await bot.SendMessage(update.Message.Chat.Id, "Вопрос принят. Напишите ответ");
+                userStates[chatId] = "add_answer";
+
+                await bot.SendMessage(chatId, "Вопрос принят. Напишите ответ");
 
                 return;
             }
 
-            if (AddAnswer)
+            if (userStates[chatId] == "add_answer")
             {
-                newQuestion.Answer = update.Message.Text;
+                newQuestion.Answer = text;
 
-                AddAnswer = false;
+                userStates[chatId] = "in_menu";
 
                 questionsStorage.Add(newQuestion);
-                await bot.SendMessage(update.Message.Chat.Id, "Вопрос добавлен");
+                await bot.SendMessage(chatId, "Вопрос добавлен");
+            }
+
+            if (userStates[chatId] == "del_question")
+            {
+                questionsStorage.Remove(cnt);
+                userStates[chatId] = "in_menu";
+                await bot.SendMessage(chatId, "Вопрос удалён");
             }
         }
     }
