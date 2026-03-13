@@ -5,11 +5,11 @@ namespace Genius___Idiot
     public class UsersStorage
     {
         private string path = "records.json";
-        List<User> users = new List<User>();
+        List<User1> users = new List<User1>();
 
-        public void Add(User user)
+        public void Add(User1 user)
         {
-            List<User> users = GetAll();
+            List<User1> users = GetAll();
 
             users.Add(user);
 
@@ -17,21 +17,21 @@ namespace Genius___Idiot
             File.WriteAllText(path, jsonString);
         }
 
-        public List<User> GetAll()
+        public List<User1> GetAll()
         {
             if (!File.Exists(path))
             {
-                return new List<User>();
+                return new List<User1>();
             }
 
             string jsonString = File.ReadAllText(path);
             if (jsonString == null)
             {
-                return new List<User>();
+                return new List<User1>();
             }
             else
             {
-                users = JsonConvert.DeserializeObject<List<User>>(jsonString);
+                users = JsonConvert.DeserializeObject<List<User1>>(jsonString);
                 return users;
             }
         }

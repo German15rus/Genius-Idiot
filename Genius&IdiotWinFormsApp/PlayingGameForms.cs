@@ -13,7 +13,7 @@ namespace Genius_IdiotWinFormsApp
 {
     public partial class PlayingGameForms : Form
     {
-        User user = new User();
+        User1 user = new User1();
         UsersStorage userStorage = new UsersStorage();
         QuestionsStorage questionsStorage = new QuestionsStorage();
         List<Question> questions = new List<Question>();

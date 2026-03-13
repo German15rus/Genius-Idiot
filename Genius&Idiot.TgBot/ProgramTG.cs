@@ -4,6 +4,7 @@ using Genius___Idiot;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
+using User1 = Genius___Idiot.User1;
 
 namespace Genius_Idiot.TgBot
 {
@@ -18,8 +19,8 @@ namespace Genius_Idiot.TgBot
         static int questionsCount;
         static int correctAnswers;
         static Question newQuestion = new Question();
-
         static Random rnd = new Random();
+
         static async Task Main(string[] args)
         {
 
@@ -30,8 +31,10 @@ namespace Genius_Idiot.TgBot
 
             Console.ReadKey();
         }
-        private static Dictionary<long, Genius___Idiot.User> usersDict = new Dictionary<long, Genius___Idiot.User>();
+
+        private static Dictionary<long, Genius___Idiot.User1> usersDict = new Dictionary<long, Genius___Idiot.User1>();
         private static Dictionary<long, string> userStates = new Dictionary<long, string>();
+
         private static async Task Bot_OnUpdate(Telegram.Bot.Types.Update update)
         {
 
@@ -40,18 +43,15 @@ namespace Genius_Idiot.TgBot
 
             if (usersDict.ContainsKey(chatId))
             {
-                Genius___Idiot.User existingUser = usersDict[chatId];
+                User1 existingUser = usersDict[chatId];
             }
             else
             {
-                if (userStates.TryGetValue(chatId, out string state) && state == "waiting_for_name") // если он находиться в каком то состояни, и это состояние ожидание имени
-                {
-                    Genius___Idiot.User newUser = new Genius___Idiot.User { Name = text };
-                    newUser.Name = update.Message.From.Username;
+                User1 newUser = new User1();
+                newUser.Name = update.Message.From.Username;
 
-                    usersDict[chatId] = newUser;
-                    userStates[chatId] = "in_menu";
-                }
+                usersDict[chatId] = newUser;
+                userStates[chatId] = "in_menu";
             }
 
             if ((text == "Результаты") && (userStates[chatId] == "in_menu"))
@@ -107,7 +107,7 @@ namespace Genius_Idiot.TgBot
 
             if (text == "Начать игру")
             {
-                Genius___Idiot.User currentUser = usersDict[chatId];
+                Genius___Idiot.User1 currentUser = usersDict[chatId];
                 userStates[chatId] = "playing_game";
 
 
@@ -121,7 +121,7 @@ namespace Genius_Idiot.TgBot
             }
 
 
-            if (userStates[chatId] == "playing_game") 
+            if (userStates[chatId] == "playing_game")
             {
                 if (text == $"{questions[randomIndex].Answer}")
                 {
@@ -137,7 +137,7 @@ namespace Genius_Idiot.TgBot
 
                 if (questions.Count == 0)
                 {
-                    Genius___Idiot.User user = new Genius___Idiot.User();
+                    Genius___Idiot.User1 user = new Genius___Idiot.User1();
                     user.Name = update.Message.From.Username;
                     user.CorrectAnswers = correctAnswers;
                     user.Diagnosis = DiagnosCalculator.Make(questionsCount, correctAnswers);

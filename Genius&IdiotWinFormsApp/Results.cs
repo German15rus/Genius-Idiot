@@ -10,7 +10,7 @@ namespace Genius_IdiotWinFormsApp
             InitializeComponent();
             var users = usersStorage.GetAll();
             resulterLabel.Text = "";
-            foreach (User user in users)
+            foreach (User1 user in users)
             {
                 resulterLabel.Text += $"Имя - {user.Name}, Правильный ответ - {user.CorrectAnswers}, Диагноз - {user.Diagnosis}" + Environment.NewLine;
             }

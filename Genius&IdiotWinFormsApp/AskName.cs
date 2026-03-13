@@ -13,7 +13,7 @@ namespace Genius_IdiotWinFormsApp
 {
     public partial class AskName : Form
     {
-        public User user = new User();
+        public User1 user = new User1();
         public AskName()
         {
             InitializeComponent();

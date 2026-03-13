@@ -8,7 +8,7 @@ namespace Genius___Idiot
 	{
 		static void Main(string[] args)
 		{
-            User user1 = new User();
+            User1 user1 = new User1();
             UsersStorage res = new UsersStorage();
 			QuestionsStorage questionsRepository = new QuestionsStorage();
 			
@@ -64,7 +64,7 @@ namespace Genius___Idiot
 			}
 		}
 		
-		public static (int,int) PlayingGame(User user1, QuestionsStorage questionsRepository)
+		public static (int,int) PlayingGame(User1 user1, QuestionsStorage questionsRepository)
 		{
             user1.CorrectAnswers = 0;
 
@@ -125,11 +125,11 @@ namespace Genius___Idiot
         private static void ShowResutls(UsersStorage res)
 		{
 			Console.WriteLine("Результаты прошлых игр");
-			List<User> users = res.GetAll();
+			List<User1> users = res.GetAll();
 
 			Console.WriteLine("--------------------------------------");
 
-			foreach (User user in users)
+			foreach (User1 user in users)
 			{
 				Console.WriteLine($"Имя пользователя - {user.Name}, Кол-во прав ответов - {user.CorrectAnswers}, Диагноз - {user.Diagnosis}");
 			}
