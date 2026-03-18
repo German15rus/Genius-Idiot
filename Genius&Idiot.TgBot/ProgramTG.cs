@@ -10,7 +10,6 @@ namespace Genius_Idiot.TgBot
 {
     internal class ProgramTG
     {
-        static UsersStorage usersStorage = new UsersStorage();
         static QuestionsStorage questionsStorage = new QuestionsStorage();
         static TelegramBotClient bot = new TelegramBotClient("8519487868:AAG89J-nRMF1hOeeiYCL2bb7nHi7O5JEqmY");
         static int randomIndex;
@@ -45,6 +44,8 @@ namespace Genius_Idiot.TgBot
                 userState = new UserState();
                 userState.CurrentPage = new FictPage();
                 userState.ChatId = chatId;
+
+                UserStateStorage.Add(userState);
             }
 
             await userState.CurrentPage.Handle(update, bot);
