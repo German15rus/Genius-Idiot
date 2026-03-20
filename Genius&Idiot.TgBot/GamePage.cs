@@ -1,23 +1,17 @@
 ﻿using Genius___Idiot;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Genius_Idiot.TgBot
 {
     public class GamePage : Page
     {
-        string userText;
+        string userText = "";
         int random;
         int questionsCount;
+        bool stopGame = false;
+        bool CheckHandle = false;
+        int cnt = 0;
 
         User1 user = new User1();
         GamePage gamePage = new GamePage();
@@ -25,11 +19,7 @@ namespace Genius_Idiot.TgBot
         List<Question> questions = new List<Question>();
         Question question = new Question();
         UserState userState = new UserState();
-
-        bool stopGame = false;
-        public bool CheckHandle = false;
-        public int cnt = 0;
-
+        
         public override string[][] Buttons()
         {
             //string[][] buttons = { ["Начать игру", "Результаты"], ["Добавить вопрос", "Удалить вопрос"] };
@@ -40,7 +30,9 @@ namespace Genius_Idiot.TgBot
         public override async Task Handle(Update update, TelegramBotClient bot)
         {
             userState = UserStateStorage.Get(update.Id);
+
             CheckHandle = true;
+
             userText = update.Message.Text;
 
             if (stopGame)
@@ -54,16 +46,15 @@ namespace Genius_Idiot.TgBot
             throw new NotImplementedException();
         }
 
-        public override string Text()//TODO:
+        public override string Text() //TODO:
         {
-            string text = "";
-
-            text = PlayingGame();
+            string text = PlayingGame();
 
             if (text == null)
             {
                 return null;
             }
+
             return text;
         }
 
@@ -76,9 +67,6 @@ namespace Genius_Idiot.TgBot
                 user.CorrectAnswers++;
                 questions.Remove(question);
             }
-
-            Random rnd = new Random(questions.Count);
-            random = Convert.ToInt32(rnd);
             
             if (questions.Count == 0)
             {
@@ -91,6 +79,9 @@ namespace Genius_Idiot.TgBot
             {
                 CheckHandle = false;
 
+                Random rnd = new Random(questions.Count);
+                random = Convert.ToInt32(rnd);
+
                 question = questions[random];
 
                 text = question.Text;
@@ -99,7 +90,7 @@ namespace Genius_Idiot.TgBot
                 return text;
             }
 
-            if (user.CorrectAnswers == 5)
+            if (cnt == 5)
             {
                 user.Diagnosis = DiagnosCalculator.Make(questionsCount, user.CorrectAnswers);
                 text = $"Ваш диагноз - {user.Diagnosis}";

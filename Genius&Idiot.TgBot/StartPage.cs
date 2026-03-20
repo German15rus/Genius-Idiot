@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Genius_Idiot.TgBot
 {
     public class StartPage : Page
     {
-        UserState userState;
         public override string[][] Buttons()
         {
             string[][] buttons = { ["Начать игру", "Результаты"], ["Добавить вопрос", "Удалить вопрос"] };
@@ -52,7 +45,7 @@ namespace Genius_Idiot.TgBot
 
         public override string Text()
         {
-            string text = "Добро пожаловать";
+            string text = "Добро пожаловать! Выбирайте интересующий вас функционал";
             return text;
         }
     }

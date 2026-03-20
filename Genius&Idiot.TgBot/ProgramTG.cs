@@ -1,28 +1,16 @@
-﻿using System.Linq.Expressions;
-using System.Runtime.Intrinsics.X86;
-using Genius___Idiot;
-using Telegram.Bot;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
-using User1 = Genius___Idiot.User1;
+﻿using Telegram.Bot;
 
 namespace Genius_Idiot.TgBot
 {
     internal class ProgramTG
     {
-        static QuestionsStorage questionsStorage = new QuestionsStorage();
         static TelegramBotClient bot = new TelegramBotClient("8519487868:AAG89J-nRMF1hOeeiYCL2bb7nHi7O5JEqmY");
-        static int randomIndex;
-        static int cnt = 0;
-        static List<Question> questions = new List<Question>();
-        static int questionsCount;
-        static int correctAnswers;
-        static Question newQuestion = new Question();
-        static Random rnd = new Random();
 
         static async Task Main(string[] args)
         {
             var me = await bot.GetMe();
+
+
             Console.WriteLine($"Bot Name - {me.FirstName}.");
 
             bot.OnUpdate += Bot_OnUpdate;
@@ -30,18 +18,17 @@ namespace Genius_Idiot.TgBot
             Console.ReadKey();
         }
 
-        private static Dictionary<long, Genius___Idiot.User1> usersDict = new Dictionary<long, Genius___Idiot.User1>();
-        private static Dictionary<long, string> userStates = new Dictionary<long, string>();
-
         private static async Task Bot_OnUpdate(Telegram.Bot.Types.Update update)
         {
 
             long chatId = UpdateHelper.GetChatId(update);
 
             var userState = UserStateStorage.Get(chatId);
+
             if (userState == null)
             {
                 userState = new UserState();
+
                 userState.CurrentPage = new FictPage();
                 userState.ChatId = chatId;
 

@@ -26,14 +26,17 @@ namespace Genius_Idiot.TgBot
 
             //-------------------------------------------
 
-            foreach (var userState in usersStates)
+            if (usersStates != null)
             {
-                if (userState.ChatId == chatId)
+                foreach (var userState in usersStates)
                 {
-                    return userState;
+                    if (userState.ChatId == chatId)
+                    {
+                        return userState;
+                    }
                 }
             }
-
+            
             return null;
         }
 
@@ -44,6 +47,7 @@ namespace Genius_Idiot.TgBot
             usersStates.Add(userState);
             //TODO: DONE ??????
             string jsonString = JsonConvert.SerializeObject(usersStates, Formatting.Indented);
+
             File.WriteAllText(path, jsonString);
         }
     }
